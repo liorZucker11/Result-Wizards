@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
   <head>
@@ -7,32 +6,114 @@
     <title>חיפוש</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
     <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        --secondary-color: #4a4a4a;
+        --background-color: #f4f7f6;
+        --text-primary: #2c3e50;
+        --text-secondary: #7f8c8d;
+      }
+
+      * {
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+      }
+
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f8f9fa;
-        color: #343a40;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
         direction: rtl;
+        line-height: 1.6;
+        min-height: 100vh;
+        background-image: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,255,255,0.5)), url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z'/%3E%3C/g%3E%3C/svg%3E");
       }
+
       .navbar {
-        background-color: #4a90e2;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        background: var(--primary-gradient);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 15px 0;
       }
-      .navbar-brand, .nav-link {
-        color: #ffffff !important;
+
+      .navbar-toggler {
+        border: none;
+        outline: none;
+        box-shadow: none;
       }
+
+      .nav-link {
+        color: rgba(255,255,255,0.9) !important;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        position: relative;
+        padding: 10px 15px !important;
+        border-radius: 8px;
+        margin: 0 5px;
+      }
+
       .nav-link:hover {
-        color: #ffdd57 !important;
+        color: white !important;
+        background-color: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
       }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background-color: white;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+
+      .nav-link:hover::after {
+        width: 70%;
+      }
+
       .container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        padding: 40px;
         margin-top: 50px;
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-        text-align: right;
+        position: relative;
+        overflow: hidden;
       }
+
+      .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary-gradient);
+      }
+
       h1 {
-        color: #4a90e2;
+        color: var(--secondary-color);
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+      }
+
+      h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50%;
+        height: 3px;
+        background: var(--primary-gradient);
+      }
+
+      @media (max-width: 768px) {
+        .navbar-nav {
+          text-align: center;
+        }
       }
     </style>
   </head>
@@ -53,7 +134,7 @@
         </div>
       </div>
     </nav>
-    <!-- <div class="container">
+    <div class="container">
       <h1 class="text-center">חיפוש</h1>
       <form action="/search" method="get">
         <div class="input-group">
@@ -61,7 +142,7 @@
           <button type="submit" class="btn btn-primary">חפש</button>
         </div>
       </form>
-    </div> -->
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
