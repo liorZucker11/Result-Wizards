@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Stats</title>
+</head>
+<body>
+    <h1>Last 10 Games Stats</h1>
+    <img src="data:image/png;base64,{{ plot_data }}" alt="Stats Plot">
+    <h2>Game Details</h2>
+    <ul>
+        {% for game, pts, reb, ast in zip(game_labels, points, rebounds, assists) %}
+        <li>{{ game }} - Points: {{ pts }}, Rebounds: {{ reb }}, Assists: {{ ast }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/">Search Another Player</a>
+</body>
+</html>
