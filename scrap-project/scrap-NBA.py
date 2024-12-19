@@ -7,14 +7,13 @@ import re
 import time
 import matplotlib.pyplot as plt
 
-# Configure Selenium WebDriver
 chrome_options = Options()
 # chrome_options.add_argument("--headless")  # Run in headless mode (no UI)
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Path to ChromeDriver
-service = Service(r"C:\Users\USER\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe")
+service = Service(r"C:\Users\Yoni\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe")
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 
@@ -34,7 +33,7 @@ def search_player_and_get_id(first_name, last_name):
     # Locate the player's profile link in the search results
     try:
         player_link = driver.find_element(By.CSS_SELECTOR, "a.RosterRow_playerLink__qw1vG")
-        relative_url  = player_link.get_attribute("href")
+        relative_url = player_link.get_attribute("href")
 
         base_url = "https://www.nba.com"
         profile_url = base_url + relative_url if relative_url.startswith("/") else relative_url
@@ -56,56 +55,79 @@ def get_player_stats(player_id, player_name):
     driver.get(url)
     time.sleep(5)  # Wait for the page to load
 
-    # Scrape game stats (adjust selectors after inspecting the site)
-    rows = driver.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")  # Adjust selector as needed
+    # Scrape game stats
+    rows = driver.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
     print(f"Found {len(rows)} game rows.")
 
     points = []
+    rebounds = []
+    assists = []
+    game_labels = []
+
     for i, row in enumerate(rows[:10]):  # Limit to the last 10 games
         try:
             cells = row.find_elements(By.TAG_NAME, "td")
-            if len(cells) > 3:  # Ensure sufficient data in the row
-                pts = cells[3].text  # Assuming PTS is the 4th column (index 3)
+            if len(cells) > 16:  # Ensure sufficient data in the row
+                game_info = cells[0].text
+                pts = cells[3].text  # PTS
+                reb = cells[15].text  # REB
+                ast = cells[16].text  # AST
+
+                game_labels.append(game_info)
                 points.append(int(pts))
+                rebounds.append(int(reb))
+                assists.append(int(ast))
         except Exception as e:
             print(f"Error processing row {i}: {e}")
 
-    if points:
+    if points and rebounds and assists:
         average_points = sum(points) / len(points)
-        print(f"Points from the last 10 games: {points}")
-        print(f"Average points: {average_points:.2f}")
+        average_rebounds = sum(rebounds) / len(rebounds)
+        average_assists = sum(assists) / len(assists)
 
-        plt.figure(figsize=(10, 6))
-        games = [f"Game {i + 1}" for i in range(len(points))]
-        plt.bar(games, points, label='Points', alpha=0.7)
-        plt.axhline(y=average_points, color='red', linestyle='--', label=f'Average: {average_points:.2f}')
-        plt.title(f"{player_name.title()} - Points in Last 10 Games")
+        print(f"Points from the last 10 games: {points}")
+        print(f"Rebounds from the last 10 games: {rebounds}")
+        print(f"Assists from the last 10 games: {assists}")
+        print(f"Average points: {average_points:.2f}")
+        print(f"Average rebounds: {average_rebounds:.2f}")
+        print(f"Average assists: {average_assists:.2f}")
+
+        plt.figure(figsize=(12, 8))
+
+        plt.plot(game_labels, points, marker='o', label='Points', alpha=0.7)
+        plt.plot(game_labels, rebounds, marker='s', label='Rebounds', alpha=0.7)
+        plt.plot(game_labels, assists, marker='^', label='Assists', alpha=0.7)
+
+        plt.axhline(y=average_points, color='red', linestyle='--', label=f'Avg Points: {average_points:.2f}')
+        plt.axhline(y=average_rebounds, color='green', linestyle='--', label=f'Avg Rebounds: {average_rebounds:.2f}')
+        plt.axhline(y=average_assists, color='blue', linestyle='--', label=f'Avg Assists: {average_assists:.2f}')
+
+        plt.title(f"{player_name.title()} - Stats in Last 10 Games")
         plt.xlabel("Games")
-        plt.ylabel("Points")
+        plt.ylabel("Stats")
         plt.xticks(rotation=45)
         plt.legend()
+        plt.grid(True)
         plt.tight_layout()
         plt.show()
     else:
-        print("No points data found.")
+        print("No sufficient data found.")
 
 
 try:
     # User Input
     first_name = "deni"
     last_name = "avdija"
-    # Step 1: Search for the Player and Get ID
+
     profile_url, player_id = search_player_and_get_id(first_name, last_name)
     if player_id:
         print(f"Player Profile URL: {profile_url}")
         print(f"Player ID: {player_id}")
 
-        # Step 2: Get Player Stats
         get_player_stats(player_id, f"{first_name} {last_name}")
 
 except Exception as e:
     print(f"An error occurred: {e}")
 
 finally:
-    # Close the browser
     driver.quit()
