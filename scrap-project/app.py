@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -9,14 +9,14 @@ import time
 import matplotlib.pyplot as plt
 import io
 import base64
+from config import Config
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
-# Selenium setup
 chrome_options = Options()
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
-service = Service(r"C:\Users\Yoni\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe")
 
 
 def search_player_and_get_id(driver, first_name, last_name):
@@ -78,7 +78,7 @@ def index():
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
 
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver = webdriver.Chrome(service=Service(app.config['CHROME_DRIVER_PATH']), options=chrome_options)
         try:
             profile_url, player_id = search_player_and_get_id(driver, first_name, last_name)
             if player_id:
@@ -108,8 +108,84 @@ def index():
         finally:
             driver.quit()
 
-    return render_template("index.html")
+    return render_template("index.html", teams=app.config["TEAM_IDS"].keys())
+
+
+def get_head_to_head_data(driver, first_team, second_team):
+    """
+    Navigates to the H2H URL for first_team vs. second_team (2024-25 season),
+    scrapes the table, and returns headers + row data.
+    """
+    url = f"https://www.nba.com/stats/team/{first_team}/boxscores-traditional?OpponentTeamID={second_team}&Season=2024-25"
+    driver.get(url)
+
+    # Let the page load
+    time.sleep(5)
+
+    table = driver.find_element(By.CSS_SELECTOR, "table.Crom_table__p1iZz")
+
+    headers = []
+    try:
+        header_cells = table.find_elements(By.CSS_SELECTOR, "tr.Crom_headers__mzI_m")
+        header_row = [hc.text.strip() for hc in header_cells]
+        headers = header_row[0].split()
+
+        if len(headers) > 1 and headers[0] == "MATCH" and headers[1] == "UP":
+            headers = ["MATCH UP"] + headers[2:]
+    except Exception as e:
+        print("No headers found or error extracting headers:", e)
+
+    # 2) Extract Row Data from <tbody>
+    rows_data = []
+    try:
+        body_rows = table.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
+        for row in body_rows:
+            cells = row.find_elements(By.TAG_NAME, "td")
+            row_text = [c.text.strip() for c in cells]
+            rows_data.append(row_text)
+    except Exception as e:
+        print("No row data found or error extracting rows:", e)
+
+    print("Headers:", headers)
+    print("Rows data:", rows_data)
+
+    return headers, rows_data
+
+
+@app.route("/headtohead", methods=["GET", "POST"])
+def headtohead():
+    if request.method == "POST":
+        team1 = request.form.get("team1")
+        team2 = request.form.get("team2")
+
+        if team1 == team2:
+            return "Please select two different teams."
+
+        # Get the internal NBA stats IDs
+        team1_id = app.config["TEAM_IDS"].get(team1)
+        team2_id = app.config["TEAM_IDS"].get(team2)
+
+        if not team1_id or not team2_id:
+            return "Invalid team selection."
+
+        driver = webdriver.Chrome(service=Service(app.config['CHROME_DRIVER_PATH']), options=chrome_options)
+        try:
+            headers, rows_data = get_head_to_head_data(driver, team1_id, team2_id)
+        finally:
+            driver.quit()
+
+        # Render a new template with the results
+        return render_template(
+            "head_to_head_result.html",
+            team1=team1,
+            team2=team2,
+            headers=headers,
+            rows_data=rows_data
+        )
+
+    # GET request -> show the selection form
+    return render_template("head_to_head_result.html", teams=app.config["TEAM_IDS"].keys())
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=4000, use_reloader=False)

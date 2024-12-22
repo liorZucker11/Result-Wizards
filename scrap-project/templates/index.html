@@ -1,11 +1,12 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBA Player Stats</title>
+    <title>NBA Stats</title>
 </head>
 <body>
+    <!-- Player Search Form (unchanged) -->
     <h1>Search NBA Player</h1>
     <form action="/" method="post">
         <label for="first_name">First Name:</label>
@@ -15,6 +16,33 @@
         <input type="text" id="last_name" name="last_name" required>
         <br>
         <button type="submit">Get Stats</button>
+    </form>
+
+    <hr>
+
+    <!-- Head-to-Head Form -->
+    <h1>Head-to-Head Matchups</h1>
+    <form action="{{ url_for('headtohead') }}" method="post">
+        <h3>Select Team 1:</h3>
+        <select name="team1" required>
+            <option value="">--Choose Team 1--</option>
+            {% for t in teams %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <h3>Select Team 2:</h3>
+        <select name="team2" required>
+            <option value="">--Choose Team 2--</option>
+            {% for t in teams %}
+                <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+        <button type="submit">Get H2H Statistics</button>
     </form>
 </body>
 </html>
