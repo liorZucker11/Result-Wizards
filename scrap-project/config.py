@@ -3,7 +3,7 @@ import os
 
 class Config:
     CHROME_DRIVER_PATH = os.getenv('CHROME_DRIVER_PATH',
-                                   r"C:\Users\Yoni\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe")
+                                   r"C:\Users\USER\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe")
     TEAM_IDS = {
         "Atlanta Hawks": "1610612737",
         "Boston Celtics": "1610612738",

@@ -111,45 +111,108 @@ def index():
     return render_template("index.html", teams=app.config["TEAM_IDS"].keys())
 
 
-def get_head_to_head_data(driver, first_team, second_team):
+def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, second_team):
     """
-    Navigates to the H2H URL for first_team vs. second_team (2024-25 season),
-    scrapes the table, and returns headers + row data.
+    Fetches the last 5 H2H games for first_team vs. second_team from the most recent seasons.
+    Starts from 2024-25 and goes back to earlier seasons if necessary.
     """
-    url = f"https://www.nba.com/stats/team/{first_team}/boxscores-traditional?OpponentTeamID={second_team}&Season=2024-25"
-    driver.get(url)
+    def fetch_team_data(team_a, team_b, season):
+        """
+        Fetches raw data for team_a against team_b for a given season.
+        """
+        url = f"https://www.nba.com/stats/team/{team_a}/boxscores-traditional?OpponentTeamID={team_b}&Season={season}"
+        driver.get(url)
+        time.sleep(5)
 
-    # Let the page load
-    time.sleep(5)
+        table = driver.find_element(By.CSS_SELECTOR, "table.Crom_table__p1iZz")
+        rows_data = []
 
-    table = driver.find_element(By.CSS_SELECTOR, "table.Crom_table__p1iZz")
+        try:
+            body_rows = table.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
+            for row in body_rows:
+                cells = row.find_elements(By.TAG_NAME, "td")
+                row_data = [cell.text.strip() for cell in cells]
+                rows_data.append(row_data)
+        except Exception as e:
+            print("Error extracting row data:", e)
 
-    headers = []
-    try:
-        header_cells = table.find_elements(By.CSS_SELECTOR, "tr.Crom_headers__mzI_m")
-        header_row = [hc.text.strip() for hc in header_cells]
-        headers = header_row[0].split()
+        return rows_data
 
-        if len(headers) > 1 and headers[0] == "MATCH" and headers[1] == "UP":
-            headers = ["MATCH UP"] + headers[2:]
-    except Exception as e:
-        print("No headers found or error extracting headers:", e)
+    # Define starting season and initialize processed data
+    current_season = 2024
+    max_games = 5
+    processed_data = []
 
-    # 2) Extract Row Data from <tbody>
-    rows_data = []
-    try:
-        body_rows = table.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
-        for row in body_rows:
-            cells = row.find_elements(By.TAG_NAME, "td")
-            row_text = [c.text.strip() for c in cells]
-            rows_data.append(row_text)
-    except Exception as e:
-        print("No row data found or error extracting rows:", e)
+    while len(processed_data) < max_games and current_season >= 2000:  # Limit to seasons starting from 2000
+        season_str = f"{current_season}-{str(current_season + 1)[-2:]}"
 
-    print("Headers:", headers)
-    print("Rows data:", rows_data)
+        # Fetch data for first_team vs. second_team
+        rows_data1 = fetch_team_data(first_team_id, second_team_id, season_str)
+        # Fetch data for second_team vs. first_team (reverse matchup)
+        rows_data2 = fetch_team_data(second_team_id, first_team_id, season_str)
 
-    return headers, rows_data
+        # Combine and process data for the season
+        for row1, row2 in zip(rows_data1, rows_data2):
+            if len(processed_data) >= max_games:
+                break
+
+            matchup = row1[0]  # Date and matchup string
+            score_team1 = int(row1[3])  # Points for first_team
+            score_team2 = int(row2[3])  # Points for second_team
+
+            if score_team1 > score_team2:
+                winner = first_team
+            else:
+                winner = second_team
+
+            processed_data.append({
+                "Matchup": matchup,
+                "Winner": winner,
+                "Score": f"{first_team} {score_team1} - {second_team} {score_team2}"
+            })
+
+        # Move to the previous season
+        current_season -= 1
+
+    return processed_data
+
+# def get_head_to_head_data(driver, first_team, second_team):
+#     """
+#     Navigates to the H2H URL for first_team vs. second_team (2024-25 season),
+#     scrapes the table, and returns headers + row data.
+#     """
+#     url = f"https://www.nba.com/stats/team/{first_team}/boxscores-traditional?OpponentTeamID={second_team}&Season=2024-25"
+#     driver.get(url)
+#
+#     time.sleep(5)
+#
+#     table = driver.find_element(By.CSS_SELECTOR, "table.Crom_table__p1iZz")
+#
+#     headers = []
+#     try:
+#         header_cells = table.find_elements(By.CSS_SELECTOR, "tr.Crom_headers__mzI_m")
+#         header_row = [hc.text.strip() for hc in header_cells]
+#         headers = header_row[0].split()
+#
+#         if len(headers) > 1 and headers[0] == "MATCH" and headers[1] == "UP":
+#             headers = ["MATCH UP"] + headers[2:]
+#     except Exception as e:
+#         print("No headers found or error extracting headers:", e)
+#
+#     rows_data = []
+#     try:
+#         body_rows = table.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
+#         for row in body_rows:
+#             cells = row.find_elements(By.TAG_NAME, "td")
+#             row_text = [c.text.strip() for c in cells]
+#             rows_data.append(row_text)
+#     except Exception as e:
+#         print("No row data found or error extracting rows:", e)
+#
+#     print("Headers:", headers)
+#     print("Rows data:", rows_data)
+#
+#     return headers, rows_data
 
 
 @app.route("/headtohead", methods=["GET", "POST"])
@@ -170,7 +233,8 @@ def headtohead():
 
         driver = webdriver.Chrome(service=Service(app.config['CHROME_DRIVER_PATH']), options=chrome_options)
         try:
-            headers, rows_data = get_head_to_head_data(driver, team1_id, team2_id)
+            rows_data = get_head_to_head_data(driver, team1_id, team2_id, team1, team2)
+            print(rows_data)
         finally:
             driver.quit()
 
@@ -179,8 +243,7 @@ def headtohead():
             "head_to_head_result.html",
             team1=team1,
             team2=team2,
-            headers=headers,
-            rows_data=rows_data
+            games=rows_data
         )
 
     # GET request -> show the selection form
