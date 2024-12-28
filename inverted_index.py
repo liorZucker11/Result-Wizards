@@ -5,6 +5,7 @@ import nltk
 
 nltk.download('stopwords')
 nltk.download('punkt')
+nltk.data.path.append(r"C:\Users\USER\nltk_data")
 
 # Initialize stop words
 stop_words = set(stopwords.words('english'))
