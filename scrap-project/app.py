@@ -16,6 +16,7 @@ from inverted_index import build_inverted_index_from_pages
 import pandas as pd
 import os
 import csv
+from prettytable import PrettyTable
 
 
 app = Flask(__name__)
@@ -113,25 +114,23 @@ def index():
                 # Build inverted index and calculate most frequent words
                 inverted_index, most_common_words = build_inverted_index_from_pages(pages_content)
 
-                # Save to CSV file
-                output_dir = os.getcwd()
-                common_words_file = os.path.join(output_dir, "most_common_words.csv")
-                inverted_index_file = os.path.join(output_dir, "inverted_index.csv")
+                # Prepare table for exporting most common words
+                table = PrettyTable()
+                table.field_names = ["Rank", "Word", "Frequency"]
+                for rank, (word, freq) in enumerate(most_common_words, start=1):
+                    table.add_row([rank, word, freq])
 
-                # Save most common words
-                with open(common_words_file, mode="w", newline="", encoding="utf-8") as file:
+                print(f"\n\nTop {len(most_common_words)} Words by Frequency")
+                print(table)
+
+                # Export table to CSV
+                filename = "most_common_words_table.csv"
+                with open(filename, mode='w', newline='', encoding='utf-8') as file:
                     writer = csv.writer(file)
-                    writer.writerow(["Word", "Frequency"])
-                    writer.writerows(most_common_words)
-
-                # Save inverted index
-                with open(inverted_index_file, mode="w", newline="", encoding="utf-8") as file:
-                    writer = csv.writer(file)
-                    writer.writerow(["Word", "Documents"])
-                    for word, doc_ids in inverted_index.items():
-                        writer.writerow([word, ", ".join(map(str, doc_ids))])
-
-                print(f"CSV files saved: {common_words_file}, {inverted_index_file}")
+                    writer.writerow(["Rank", "Word", "Frequency"])
+                    for rank, (word, freq) in enumerate(most_common_words, start=1):
+                        writer.writerow([rank, word, freq])
+                print(f"Data has been exported to {filename}")
 
                 # Create plot
                 fig, ax = plt.subplots(figsize=(10, 6))
@@ -159,7 +158,7 @@ def index():
                     points=points,
                     rebounds=rebounds,
                     assists=assists,
-                    zip=zip
+                    zip=zip,
                 )
 
         finally:
