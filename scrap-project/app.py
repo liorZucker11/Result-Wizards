@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from config import Config
+from inverted_index import build_inverted_index_from_pages
+from bs4 import BeautifulSoup
+import pandas as pd
+import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -17,6 +21,13 @@ app.config.from_object(Config)
 chrome_options = Options()
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
+
+
+def fetch_page_content(driver):
+    """
+    Fetch the full HTML content of the current page.
+    """
+    return driver.page_source
 
 
 def search_player_and_get_id(driver, first_name, last_name):
@@ -50,6 +61,9 @@ def get_player_stats(driver, player_id):
     driver.get(url)
     time.sleep(5)
 
+    # Fetch the full page content
+    page_content = fetch_page_content(driver)
+
     rows = driver.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
     points, rebounds, assists, game_labels = [], [], [], []
 
@@ -69,11 +83,13 @@ def get_player_stats(driver, player_id):
         except Exception as e:
             print(f"Error processing row: {e}")
 
-    return points, rebounds, assists, game_labels
+    return points, rebounds, assists, game_labels, page_content
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    pages_content = []
+
     if request.method == "POST":
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
@@ -82,7 +98,32 @@ def index():
         try:
             profile_url, player_id = search_player_and_get_id(driver, first_name, last_name)
             if player_id:
-                points, rebounds, assists, game_labels = get_player_stats(driver, player_id)
+                points, rebounds, assists, game_labels, page_content = get_player_stats(driver, player_id)
+                pages_content.append(page_content)
+
+                # Build inverted index and calculate most frequent words
+                inverted_index, most_common_words = build_inverted_index_from_pages(pages_content)
+
+                # Save to Excel file
+                output_file = os.path.join(os.getcwd(), "inverted_index_output.xlsx")
+
+                # Create DataFrame for most common words
+                common_words_df = pd.DataFrame(most_common_words, columns=["Word", "Frequency"])
+
+                # Create DataFrame for inverted index
+                inverted_index_data = {"Word": [], "Documents": []}
+                for word, doc_ids in inverted_index.items():
+                    inverted_index_data["Word"].append(word)
+                    inverted_index_data["Documents"].append(", ".join(map(str, doc_ids)))
+
+                inverted_index_df = pd.DataFrame(inverted_index_data)
+
+                # Write to Excel file
+                with pd.ExcelWriter(output_file) as writer:
+                    common_words_df.to_excel(writer, sheet_name="Most Common Words", index=False)
+                    inverted_index_df.to_excel(writer, sheet_name="Inverted Index", index=False)
+
+                print(f"Excel file saved: {output_file}")
 
                 # Create plot
                 fig, ax = plt.subplots(figsize=(10, 6))
