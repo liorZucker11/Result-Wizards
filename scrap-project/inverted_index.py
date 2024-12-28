@@ -2,11 +2,13 @@ from collections import defaultdict, Counter
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import nltk
+import nltk.data
+
 
 nltk.download('stopwords')
 nltk.download('punkt')
-nltk.data.path.append(r"C:\Users\USER\nltk_data")
-
+nltk.download('punkt_tab')
+nltk.data.path.append(r"C:\Users\USER\AppData\Roaming\nltk_data")
 # Initialize stop words
 stop_words = set(stopwords.words('english'))
 stop_words.update(map(str, range(10)))  # Add digits '0'-'9' to stop words

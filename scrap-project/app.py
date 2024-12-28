@@ -1,3 +1,4 @@
+import nltk
 from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -12,9 +13,9 @@ import io
 import base64
 from config import Config
 from inverted_index import build_inverted_index_from_pages
-from bs4 import BeautifulSoup
 import pandas as pd
 import os
+import csv
 
 
 app = Flask(__name__)
@@ -112,26 +113,25 @@ def index():
                 # Build inverted index and calculate most frequent words
                 inverted_index, most_common_words = build_inverted_index_from_pages(pages_content)
 
-                # Save to Excel file
-                output_file = os.path.join(os.getcwd(), "inverted_index_output.xlsx")
+                # Save to CSV file
+                output_dir = os.getcwd()
+                common_words_file = os.path.join(output_dir, "most_common_words.csv")
+                inverted_index_file = os.path.join(output_dir, "inverted_index.csv")
 
-                # Create DataFrame for most common words
-                common_words_df = pd.DataFrame(most_common_words, columns=["Word", "Frequency"])
+                # Save most common words
+                with open(common_words_file, mode="w", newline="", encoding="utf-8") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["Word", "Frequency"])
+                    writer.writerows(most_common_words)
 
-                # Create DataFrame for inverted index
-                inverted_index_data = {"Word": [], "Documents": []}
-                for word, doc_ids in inverted_index.items():
-                    inverted_index_data["Word"].append(word)
-                    inverted_index_data["Documents"].append(", ".join(map(str, doc_ids)))
+                # Save inverted index
+                with open(inverted_index_file, mode="w", newline="", encoding="utf-8") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["Word", "Documents"])
+                    for word, doc_ids in inverted_index.items():
+                        writer.writerow([word, ", ".join(map(str, doc_ids))])
 
-                inverted_index_df = pd.DataFrame(inverted_index_data)
-
-                # Write to Excel file
-                with pd.ExcelWriter(output_file) as writer:
-                    common_words_df.to_excel(writer, sheet_name="Most Common Words", index=False)
-                    inverted_index_df.to_excel(writer, sheet_name="Inverted Index", index=False)
-
-                print(f"Excel file saved: {output_file}")
+                print(f"CSV files saved: {common_words_file}, {inverted_index_file}")
 
                 # Create plot
                 fig, ax = plt.subplots(figsize=(10, 6))
@@ -152,7 +152,15 @@ def index():
                 plot_data = base64.b64encode(buf.read()).decode('utf-8')
                 buf.close()
 
-                return render_template("result.html", plot_data=plot_data, game_labels=game_labels, points=points, rebounds=rebounds, assists=assists, zip=zip)
+                return render_template(
+                    "result.html",
+                    plot_data=plot_data,
+                    game_labels=game_labels,
+                    points=points,
+                    rebounds=rebounds,
+                    assists=assists,
+                    zip=zip
+                )
 
         finally:
             driver.quit()
@@ -280,7 +288,7 @@ def headtohead():
         if not team1_id or not team2_id:
             return "Invalid team selection."
 
-        driver = webdriver.Chrome(service=Service(app.config['CHROME_DRIVER_PATH']), options=chrome_options)
+        driver = webdriver.Chrome(service=service, options=chrome_options)
         try:
             rows_data = get_head_to_head_data(driver, team1_id, team2_id, team1, team2)
             print(rows_data)
