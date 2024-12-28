@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager  # Import webdriver-manager
 import re
 import time
 import matplotlib.pyplot as plt
@@ -15,12 +16,19 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import os
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Set up Chrome options
 chrome_options = Options()
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
+# chrome_options.add_argument("--headless")  # Optional: run in headless mode
+chrome_options.add_argument("--disable-gpu")
+
+# Automatically manage Chrome driver with webdriver-manager
+service = Service(ChromeDriverManager().install())
 
 
 def fetch_page_content(driver):
@@ -94,7 +102,7 @@ def index():
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
 
-        driver = webdriver.Chrome(service=Service(app.config['CHROME_DRIVER_PATH']), options=chrome_options)
+        driver = webdriver.Chrome(service=service, options=chrome_options)
         try:
             profile_url, player_id = search_player_and_get_id(driver, first_name, last_name)
             if player_id:
