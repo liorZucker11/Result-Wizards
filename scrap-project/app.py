@@ -8,7 +8,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 import re
 import time
 from config import Config
-#from inverted_index import build_inverted_index_from_pages
 import csv
 
 
@@ -118,6 +117,7 @@ def get_player_stats(driver, player_id):
 def index():
     message_player = None
     message_h2h = None
+    message_free_throws = None
 
     if request.method == "POST" and "first_name" in request.form:
         first_name = request.form.get("first_name")
@@ -129,11 +129,9 @@ def index():
             if player_id:
                 stats_data = get_player_stats(driver, player_id)
                 if stats_data:
-                    # Export to CSV
                     filename = f"{first_name}_{last_name}_stats.csv"
                     headers = ["Game", "Points", "Rebounds", "Assists"]
                     export_to_csv(filename, headers, stats_data)
-
                     message_player = f"Player stats exported to {filename}"
                 else:
                     message_player = "No stats data found for the player."
@@ -165,12 +163,24 @@ def index():
                     rows = [[data["Matchup"], data["Winner"], data["Score"]] for data in rows_data]
 
                     export_to_csv(filename, headers, rows)
-
                     message_h2h = f"Head-to-Head data exported to {filename}"
                 else:
                     message_h2h = "No head-to-head data found for the selected teams."
 
-    return render_template("index.html", message_player=message_player, message_h2h=message_h2h, teams=app.config["TEAM_IDS"].keys())
+    if request.method == "POST" and request.form.get("action") == "free_throws":
+        try:
+            filename = get_top_5_teams_by_free_throw_percentage()
+            message_free_throws = f"Free throw stats exported to {filename}"
+        except Exception as e:
+            message_free_throws = f"An error occurred: {str(e)}"
+
+    return render_template(
+        "index.html",
+        message_player=message_player,
+        message_h2h=message_h2h,
+        message_free_throws=message_free_throws,
+        teams=app.config["TEAM_IDS"].keys(),
+    )
 
 
 def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, second_team):
@@ -234,6 +244,99 @@ def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, sec
         current_season -= 1
 
     return processed_data
+
+
+def get_team_free_throw_percentage(driver, team_id):
+    """
+    Retrieves the free throw percentages for the last 3 games for a given team.
+    """
+    url = f"https://www.nba.com/stats/team/{team_id}/boxscores-traditional"
+    driver.get(url)
+    time.sleep(5)
+
+    rows = driver.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
+    free_throw_percentages = []
+
+    for row in rows[:3]:  # Fetch percentages for the last 3 games
+        try:
+            cells = row.find_elements(By.TAG_NAME, "td")
+            if len(cells) > 12:  # Ensure the cell exists
+                ft_percentage = cells[12].text  # Free throw percentage
+                if ft_percentage != "":  # Avoid empty cells
+                    free_throw_percentages.append(float(ft_percentage.strip('%')))
+        except Exception as e:
+            print(f"Error processing row for team {team_id}: {e}")
+
+    return free_throw_percentages
+
+
+def get_top_5_teams_by_free_throw_percentage():
+    """
+    Iterates over all teams, calculates their average free throw percentage for
+    the last 3 games, and identifies the top 5 teams.
+    """
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    team_results = []
+
+    try:
+        for team_name, team_id in app.config["TEAM_IDS"].items():
+            if not team_id:  # Skip teams without IDs
+                continue
+
+            free_throw_percentages = get_team_free_throw_percentage(driver, team_id)
+            if free_throw_percentages:
+                avg_percentage = sum(free_throw_percentages) / len(free_throw_percentages)
+                team_results.append({
+                    "Team": team_name,
+                    "Free Throw Percentages": free_throw_percentages,
+                    "Average Free Throw Percentage": avg_percentage
+                })
+    finally:
+        driver.quit()
+
+    # Sort by average free throw percentage in descending order
+    team_results.sort(key=lambda x: x["Average Free Throw Percentage"], reverse=True)
+
+    # Export to CSV
+    filename = "free_throw_percentages.csv"
+    export_free_throw_percentages_to_csv(filename, team_results)
+
+    return filename  # Return the CSV file name to indicate success
+
+
+def export_free_throw_percentages_to_csv(filename, team_results):
+    """
+    Exports free throw percentages to a CSV file, including the top 5 teams at the end.
+    """
+    with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+
+        # Write the header for all teams
+        writer.writerow(["Team", "Game 1 Free Throw %", "Game 2 Free Throw %", "Game 3 Free Throw %", "Average Free Throw %"])
+
+        # Write data for all teams
+        for team in team_results:
+            row = [team["Team"]]
+            row.extend(team["Free Throw Percentages"])
+            row.append(f"{team['Average Free Throw Percentage']:.2f}")
+            writer.writerow(row)
+
+        # Add a blank row as a separator
+        writer.writerow([])
+
+        # Write the top 5 teams header
+        writer.writerow(["Top 5 Teams by Average Free Throw Percentage"])
+        writer.writerow(["Rank", "Team", "Game 1 Free Throw %", "Game 2 Free Throw %", "Game 3 Free Throw %", "Average Free Throw %"])
+
+        # Write data for the top 5 teams
+        for rank, team in enumerate(team_results[:5], start=1):
+            row = [rank, team["Team"]]
+            row.extend(team["Free Throw Percentages"])
+            row.append(f"{team['Average Free Throw Percentage']:.2f}")
+            writer.writerow(row)
+
+    print(f"Free throw percentages exported to {filename}")
+
 
 
 if __name__ == "__main__":

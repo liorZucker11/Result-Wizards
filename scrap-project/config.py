@@ -9,8 +9,7 @@ class Config:
         "Charlotte Hornets": "1610612766",
         "Chicago Bulls": "1610612741",
         "Cleveland Cavaliers": "1610612739",
-        "Dallas Mavericks": ""
-                            "",
+        "Dallas Mavericks": "1610612742",
         "Denver Nuggets": "1610612743",
         "Detroit Pistons": "1610612765",
         "Golden State Warriors": "1610612744",
@@ -36,6 +35,3 @@ class Config:
         "Washington Wizards": "1610612764"
     }
 
-# head-to-head data:
-# https://www.nba.com/stats/team/1610612737/boxscores-traditional?OpponentTeamID=1610612763&Season=2024-25
-#                                 one team                                     second team          season number

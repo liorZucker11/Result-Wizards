@@ -71,7 +71,6 @@ urls_pages = {
         8: "player/1626164/devin-booker",
         9: "player/201566/russell-westbrook",
         10: "player/203076/anthony-davis",
-
     },
     "https://www.nba.com/celtics/news/": {
         11: "sidebar-post-20241215-pritchard-makes-history-in-d-c-as-celtics-down-wizards",

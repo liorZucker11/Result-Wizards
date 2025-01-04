@@ -94,5 +94,15 @@
             <p class="message">{{ message_h2h }}</p>
         {% endif %}
     </form>
+
+    <hr>
+
+    <h1>Top 5 Teams by Free Throw Percentage</h1>
+    <form action="/" method="post">
+        <button type="submit" name="action" value="free_throws">Get Free Throws Stats</button>
+        {% if message_free_throws %}
+            <p class="message">{{ message_free_throws }}</p>
+        {% endif %}
+    </form>
 </body>
 </html>
