@@ -9,7 +9,8 @@ class Config:
         "Charlotte Hornets": "1610612766",
         "Chicago Bulls": "1610612741",
         "Cleveland Cavaliers": "1610612739",
-        "Dallas Mavericks": "1610612742",
+        "Dallas Mavericks": ""
+                            "",
         "Denver Nuggets": "1610612743",
         "Detroit Pistons": "1610612765",
         "Golden State Warriors": "1610612744",

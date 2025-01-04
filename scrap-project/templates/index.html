@@ -1,4 +1,3 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,6 +48,12 @@
         button:hover {
             background-color: #1769aa;
         }
+        .message {
+            margin-top: -10px;
+            margin-bottom: 20px;
+            color: green;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -58,13 +63,16 @@
         <input type="text" id="first_name" name="first_name" required>
         <label for="last_name">Last Name:</label>
         <input type="text" id="last_name" name="last_name" required>
-        <button type="submit">Get Stats</button>
+        <button type="submit" name="action" value="player_stats">Get Stats</button>
+        {% if message_player %}
+            <p class="message">{{ message_player }}</p>
+        {% endif %}
     </form>
 
     <hr>
 
     <h1>Head-to-Head Matchups</h1>
-    <form action="{{ url_for('headtohead') }}" method="post">
+    <form action="/" method="post">
         <h3>Select Team 1:</h3>
         <select name="team1" required>
             <option value="">--Choose Team 1--</option>
@@ -81,7 +89,10 @@
             {% endfor %}
         </select>
 
-        <button type="submit">Get H2H Statistics</button>
+        <button type="submit" name="action" value="head_to_head">Get H2H Statistics</button>
+        {% if message_h2h %}
+            <p class="message">{{ message_h2h }}</p>
+        {% endif %}
     </form>
 </body>
 </html>

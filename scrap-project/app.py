@@ -1,22 +1,15 @@
-import nltk
 from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager  # Import webdriver-manager
+from webdriver_manager.chrome import ChromeDriverManager
 import re
 import time
-import matplotlib.pyplot as plt
-import io
-import base64
 from config import Config
-from inverted_index import build_inverted_index_from_pages
-import pandas as pd
-import os
+#from inverted_index import build_inverted_index_from_pages
 import csv
-from prettytable import PrettyTable
 
 
 app = Flask(__name__)
@@ -27,10 +20,31 @@ chrome_options = Options()
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 # chrome_options.add_argument("--headless")  # Optional: run in headless mode
-chrome_options.add_argument("--disable-gpu")
 
-# Automatically manage Chrome driver with webdriver-manager
 service = Service(ChromeDriverManager().install())
+page_texts = []
+
+
+def extract_visible_text(driver):
+    """
+    Extracts visible text from the current page source.
+    """
+    from bs4 import BeautifulSoup
+
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    texts = soup.stripped_strings
+    return " ".join(texts)
+
+
+def export_to_csv(filename, headers, rows):
+    """
+    Exports data to a CSV file.
+    """
+    with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+        writer.writerows(rows)
+    print(f"Data has been exported to {filename}")
 
 
 def fetch_page_content(driver):
@@ -44,7 +58,6 @@ def search_player_and_get_id(driver, first_name, last_name):
     url = "https://www.nba.com/players"
     driver.get(url)
     time.sleep(3)
-
     search_bar = driver.find_element(By.CSS_SELECTOR, "input[placeholder='Search Players']")
     search_bar.clear()
     search_bar.send_keys(f"{first_name} {last_name}")
@@ -71,36 +84,42 @@ def get_player_stats(driver, player_id):
     driver.get(url)
     time.sleep(5)
 
-    # Fetch the full page content
-    page_content = fetch_page_content(driver)
-
     rows = driver.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
-    points, rebounds, assists, game_labels = [], [], [], []
+    stats_data = []
 
-    for row in rows[:10]:
+    for row in rows[:10]:  # Fetch stats for the last 10 games
         try:
             cells = row.find_elements(By.TAG_NAME, "td")
             if len(cells) > 16:
-                game_info = cells[0].text
-                pts = cells[3].text
-                reb = cells[15].text
-                ast = cells[16].text
+                game_info = cells[0].text  # Game information
+                pts = cells[3].text  # Points
+                reb = cells[15].text  # Rebounds
+                ast = cells[16].text  # Assists
 
-                points.append(int(pts))
-                rebounds.append(int(reb))
-                assists.append(int(ast))
-                game_labels.append(game_info)
+                stats_data.append([game_info, int(pts), int(reb), int(ast)])
         except Exception as e:
             print(f"Error processing row: {e}")
 
-    return points, rebounds, assists, game_labels, page_content
+    # Calculate averages
+    if stats_data:
+        avg_points = sum(row[1] for row in stats_data) / len(stats_data)
+        avg_rebounds = sum(row[2] for row in stats_data) / len(stats_data)
+        avg_assists = sum(row[3] for row in stats_data) / len(stats_data)
+    else:
+        avg_points = avg_rebounds = avg_assists = 0
+
+    # Append averages as the last row
+    stats_data.append(["Averages", round(avg_points, 2), round(avg_rebounds, 2), round(avg_assists, 2)])
+
+    return stats_data
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    pages_content = []
+    message_player = None
+    message_h2h = None
 
-    if request.method == "POST":
+    if request.method == "POST" and "first_name" in request.form:
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
 
@@ -108,63 +127,50 @@ def index():
         try:
             profile_url, player_id = search_player_and_get_id(driver, first_name, last_name)
             if player_id:
-                points, rebounds, assists, game_labels, page_content = get_player_stats(driver, player_id)
-                pages_content.append(page_content)
+                stats_data = get_player_stats(driver, player_id)
+                if stats_data:
+                    # Export to CSV
+                    filename = f"{first_name}_{last_name}_stats.csv"
+                    headers = ["Game", "Points", "Rebounds", "Assists"]
+                    export_to_csv(filename, headers, stats_data)
 
-                # Build inverted index and calculate most frequent words
-                inverted_index, most_common_words = build_inverted_index_from_pages(pages_content)
-
-                # Prepare table for exporting most common words
-                table = PrettyTable()
-                table.field_names = ["Rank", "Word", "Frequency"]
-                for rank, (word, freq) in enumerate(most_common_words, start=1):
-                    table.add_row([rank, word, freq])
-
-                print(f"\n\nTop {len(most_common_words)} Words by Frequency")
-                print(table)
-
-                # Export table to CSV
-                filename = "most_common_words_table.csv"
-                with open(filename, mode='w', newline='', encoding='utf-8') as file:
-                    writer = csv.writer(file)
-                    writer.writerow(["Rank", "Word", "Frequency"])
-                    for rank, (word, freq) in enumerate(most_common_words, start=1):
-                        writer.writerow([rank, word, freq])
-                print(f"Data has been exported to {filename}")
-
-                # Create plot
-                fig, ax = plt.subplots(figsize=(10, 6))
-                ax.plot(game_labels, points, marker='o', label="Points", alpha=0.7)
-                ax.plot(game_labels, rebounds, marker='s', label="Rebounds", alpha=0.7)
-                ax.plot(game_labels, assists, marker='^', label="Assists", alpha=0.7)
-                ax.legend()
-                ax.set_title(f"Last 10 Games Stats")
-                ax.set_xlabel("Games")
-                ax.set_ylabel("Stats")
-                plt.xticks(rotation=45)
-
-                # Save plot to a string
-                buf = io.BytesIO()
-                plt.tight_layout()
-                plt.savefig(buf, format="png")
-                buf.seek(0)
-                plot_data = base64.b64encode(buf.read()).decode('utf-8')
-                buf.close()
-
-                return render_template(
-                    "result.html",
-                    plot_data=plot_data,
-                    game_labels=game_labels,
-                    points=points,
-                    rebounds=rebounds,
-                    assists=assists,
-                    zip=zip,
-                )
-
+                    message_player = f"Player stats exported to {filename}"
+                else:
+                    message_player = "No stats data found for the player."
         finally:
             driver.quit()
 
-    return render_template("index.html", teams=app.config["TEAM_IDS"].keys())
+    if request.method == "POST" and "team1" in request.form:
+        team1 = request.form.get("team1")
+        team2 = request.form.get("team2")
+
+        if team1 == team2:
+            message_h2h = "Please select two different teams."
+        else:
+            team1_id = app.config["TEAM_IDS"].get(team1)
+            team2_id = app.config["TEAM_IDS"].get(team2)
+
+            if not team1_id or not team2_id:
+                message_h2h = "Invalid team selection."
+            else:
+                driver = webdriver.Chrome(service=service, options=chrome_options)
+                try:
+                    rows_data = get_head_to_head_data(driver, team1_id, team2_id, team1, team2)
+                finally:
+                    driver.quit()
+
+                if rows_data:
+                    filename = f"{team1}_vs_{team2}_H2H.csv"
+                    headers = ["Matchup", "Winner", "Score"]
+                    rows = [[data["Matchup"], data["Winner"], data["Score"]] for data in rows_data]
+
+                    export_to_csv(filename, headers, rows)
+
+                    message_h2h = f"Head-to-Head data exported to {filename}"
+                else:
+                    message_h2h = "No head-to-head data found for the selected teams."
+
+    return render_template("index.html", message_player=message_player, message_h2h=message_h2h, teams=app.config["TEAM_IDS"].keys())
 
 
 def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, second_team):
@@ -216,10 +222,7 @@ def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, sec
             score_team1 = int(row1[3])  # Points for first_team
             score_team2 = int(row2[3])  # Points for second_team
 
-            if score_team1 > score_team2:
-                winner = first_team
-            else:
-                winner = second_team
+            winner = first_team if score_team1 > score_team2 else second_team
 
             processed_data.append({
                 "Matchup": matchup,
@@ -231,79 +234,6 @@ def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, sec
         current_season -= 1
 
     return processed_data
-
-# def get_head_to_head_data(driver, first_team, second_team):
-#     """
-#     Navigates to the H2H URL for first_team vs. second_team (2024-25 season),
-#     scrapes the table, and returns headers + row data.
-#     """
-#     url = f"https://www.nba.com/stats/team/{first_team}/boxscores-traditional?OpponentTeamID={second_team}&Season=2024-25"
-#     driver.get(url)
-#
-#     time.sleep(5)
-#
-#     table = driver.find_element(By.CSS_SELECTOR, "table.Crom_table__p1iZz")
-#
-#     headers = []
-#     try:
-#         header_cells = table.find_elements(By.CSS_SELECTOR, "tr.Crom_headers__mzI_m")
-#         header_row = [hc.text.strip() for hc in header_cells]
-#         headers = header_row[0].split()
-#
-#         if len(headers) > 1 and headers[0] == "MATCH" and headers[1] == "UP":
-#             headers = ["MATCH UP"] + headers[2:]
-#     except Exception as e:
-#         print("No headers found or error extracting headers:", e)
-#
-#     rows_data = []
-#     try:
-#         body_rows = table.find_elements(By.CSS_SELECTOR, "tbody.Crom_body__UYOcU tr")
-#         for row in body_rows:
-#             cells = row.find_elements(By.TAG_NAME, "td")
-#             row_text = [c.text.strip() for c in cells]
-#             rows_data.append(row_text)
-#     except Exception as e:
-#         print("No row data found or error extracting rows:", e)
-#
-#     print("Headers:", headers)
-#     print("Rows data:", rows_data)
-#
-#     return headers, rows_data
-
-
-@app.route("/headtohead", methods=["GET", "POST"])
-def headtohead():
-    if request.method == "POST":
-        team1 = request.form.get("team1")
-        team2 = request.form.get("team2")
-
-        if team1 == team2:
-            return "Please select two different teams."
-
-        # Get the internal NBA stats IDs
-        team1_id = app.config["TEAM_IDS"].get(team1)
-        team2_id = app.config["TEAM_IDS"].get(team2)
-
-        if not team1_id or not team2_id:
-            return "Invalid team selection."
-
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-        try:
-            rows_data = get_head_to_head_data(driver, team1_id, team2_id, team1, team2)
-            print(rows_data)
-        finally:
-            driver.quit()
-
-        # Render a new template with the results
-        return render_template(
-            "head_to_head_result.html",
-            team1=team1,
-            team2=team2,
-            games=rows_data
-        )
-
-    # GET request -> show the selection form
-    return render_template("head_to_head_result.html", teams=app.config["TEAM_IDS"].keys())
 
 
 if __name__ == "__main__":
