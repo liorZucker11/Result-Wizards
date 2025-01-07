@@ -1,12 +1,24 @@
 #!/usr/bin/env bash
-set -x
+# Exit on error
+set -o errexit
 
-# Set up Chromium directory
-CHROMIUM_DIR=$HOME/chromium
-mkdir -p $CHROMIUM_DIR
+# Persistent storage directory for Chrome
+STORAGE_DIR=/opt/render/project/.render
 
-# Download a verified headless Chromium binary for Linux
-wget -q -O $CHROMIUM_DIR/chromium.zip https://github.com/adieuadieu/serverless-chrome/releases/download/v1.0.0-55/stable-headless-chromium.tar.gz
+if [[ ! -d $STORAGE_DIR/chrome ]]; then
+  echo "...Downloading Chrome"
+  mkdir -p $STORAGE_DIR/chrome
+  cd $STORAGE_DIR/chrome
 
-# Extract the Chromium binary
-tar -xvzf $CHROMIUM_DIR/chromium.zip -C $CHROMIUM_DIR
+  # Download Chrome
+  wget -q -O chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+  # Extract the Chrome binary
+  dpkg -x chrome.deb $STORAGE_DIR/chrome
+
+  # Clean up
+  rm chrome.deb
+  cd $HOME/project/src # Return to the project directory
+else
+  echo "...Using Chrome from cache"
+fi

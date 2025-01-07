@@ -21,7 +21,7 @@ chrome_options = Options()
 chrome_options.add_argument("--headless=new")  # Optional headless mode
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
-chrome_options.binary_location = "/home/render/chromium/headless-chromium"  # Path to Chromium binary
+chrome_options.binary_location = "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome"  # Path to Chrome binary
 
 service = Service(ChromeDriverManager().install())
 page_texts = []
