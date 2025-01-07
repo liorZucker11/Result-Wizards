@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 set -x
 
-# Update and install required dependencies
-apt-get update
-apt-get install -y wget gnupg
+# Download Chrome for Linux
+CHROME_DIR="/opt/chrome"
+mkdir -p $CHROME_DIR
+wget -q -O $CHROME_DIR/chrome-linux.zip https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+apt-get -y install libnss3 libnspr4 libxss1 fonts-liberation libappindicator3-1 xdg-utils libgbm-dev
+# Unzip and make Chrome executable
+dpkg -i chrome.deb
 
-# Add Chrome's signing key and repository
-wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-
-# Install Chrome
-apt-get update
-apt-get install -y google-chrome-stable
