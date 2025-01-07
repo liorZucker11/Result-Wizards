@@ -27,34 +27,12 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
 chrome_options.binary_location = "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome"  # Path to Chrome binary
 
+# Specify the ChromeDriver version matching the Chrome version installed
+service = Service(
+    ChromeDriverManager(driver_version="114.0.5735.90", chrome_type=ChromeType.GOOGLE).install()
+)
 
-def get_installed_chrome_version():
-    """
-    Get the installed Chrome version dynamically.
-    """
-    try:
-        # Adjust the command based on OS
-        command = "google-chrome --version"  # Linux/MacOS
-        output = subprocess.check_output(command, shell=True).decode("utf-8").strip()
-        version = output.split(" ")[-1]  # Extract the version number
-        return version
-    except Exception as e:
-        print(f"Could not determine Chrome version: {e}")
-        return None
-
-
-# Get the installed Chrome version
-chrome_version = get_installed_chrome_version()
-
-# Automatically download the correct ChromeDriver version
-if chrome_version:
-    service = Service(
-        ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install()
-    )
-else:
-    service = Service(ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install())  # Default to latest
-
-# Initialize the WebDriver
+# Initialize WebDriver
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 page_texts = []
