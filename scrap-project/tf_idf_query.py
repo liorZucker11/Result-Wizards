@@ -37,6 +37,7 @@ def count_words_in_page(url, search_words):
 
     return results
 
+
 # Function to export results to CSV
 def export_to_csv(filename, results):
     """
@@ -55,6 +56,7 @@ def export_to_csv(filename, results):
             writer.writerow(row)
 
     print(f"Word counts exported to {filename}")
+
 
 # Collect word counts for all URLs
 all_results = {}
