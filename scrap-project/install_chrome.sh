@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -x
 
-# Set directory for Chromium
+# Set up Chromium directory
 CHROMIUM_DIR=$HOME/chromium
 mkdir -p $CHROMIUM_DIR
 
-# Download pre-built Chromium binary
-wget -q -O $CHROMIUM_DIR/chromium.tar.xz https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/982481/chrome-linux.zip
+# Download a verified headless Chromium binary for Linux
+wget -q -O $CHROMIUM_DIR/chromium.zip https://github.com/adieuadieu/serverless-chrome/releases/download/v1.0.0-55/stable-headless-chromium.tar.gz
 
-# Extract Chromium
-tar -xf $CHROMIUM_DIR/chromium.tar.xz -C $CHROMIUM_DIR
+# Extract the Chromium binary
+tar -xvzf $CHROMIUM_DIR/chromium.zip -C $CHROMIUM_DIR
