@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -x
 
-# Download Chrome for Linux
-CHROME_DIR="/opt/chrome"
-mkdir -p $CHROME_DIR
-wget -q -O $CHROME_DIR/chrome-linux.zip https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-apt-get -y install libnss3 libnspr4 libxss1 fonts-liberation libappindicator3-1 xdg-utils libgbm-dev
-# Unzip and make Chrome executable
-dpkg -i chrome.deb
+# Set directory for Chromium
+CHROMIUM_DIR=$HOME/chromium
+mkdir -p $CHROMIUM_DIR
 
+# Download pre-built Chromium binary
+wget -q -O $CHROMIUM_DIR/chromium.zip https://github.com/macchrome/winchrome/releases/download/v113.0.5672.63-r1077478-Win64/ChromiumPortable_113.0.5672.63-r1077478-win64.7z
+
+# Extract Chromium
+unzip $CHROMIUM_DIR/chromium.zip -d $CHROMIUM_DIR
