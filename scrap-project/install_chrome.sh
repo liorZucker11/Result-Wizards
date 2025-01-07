@@ -6,7 +6,7 @@ CHROMIUM_DIR=$HOME/chromium
 mkdir -p $CHROMIUM_DIR
 
 # Download pre-built Chromium binary
-wget -q -O $CHROMIUM_DIR/chromium.zip https://github.com/macchrome/winchrome/releases/download/v113.0.5672.63-r1077478-Win64/ChromiumPortable_113.0.5672.63-r1077478-win64.7z
+wget -q -O $CHROMIUM_DIR/chromium.tar.xz https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/982481/chrome-linux.zip
 
 # Extract Chromium
-unzip $CHROMIUM_DIR/chromium.zip -d $CHROMIUM_DIR
+tar -xf $CHROMIUM_DIR/chromium.tar.xz -C $CHROMIUM_DIR
