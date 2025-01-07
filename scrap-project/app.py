@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 import time
@@ -16,9 +18,9 @@ app.config.from_object(Config)
 
 # Set up Chrome options
 chrome_options = Options()
+chrome_options.add_argument("--headless=new")  # Optional headless mode
 chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-# chrome_options.add_argument("--headless")  # Optional: run in headless mode
+chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
 
 service = Service(ChromeDriverManager().install())
 page_texts = []
@@ -115,6 +117,7 @@ def get_player_stats(driver, player_id):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    start_time = time.time()
     message_player = None
     message_h2h = None
     message_free_throws = None
@@ -174,6 +177,9 @@ def index():
         except Exception as e:
             message_free_throws = f"An error occurred: {str(e)}"
 
+    end_time = time.time()
+    print(f"The execution took {end_time - start_time:.2f} seconds to complete.")
+
     return render_template(
         "index.html",
         message_player=message_player,
@@ -191,12 +197,14 @@ def get_head_to_head_data(driver, first_team_id, second_team_id, first_team, sec
     def fetch_team_data(team_a, team_b, season):
         """
         Fetches raw data for team_a against team_b for a given season.
+        Handles cookie banners by clicking the close button if present.
         """
         url = f"https://www.nba.com/stats/team/{team_a}/boxscores-traditional?OpponentTeamID={team_b}&Season={season}"
         driver.get(url)
-        time.sleep(5)
 
-        table = driver.find_element(By.CSS_SELECTOR, "table.Crom_table__p1iZz")
+        table = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "table.Crom_table__p1iZz"))
+        )
         rows_data = []
 
         try:
