@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -368,4 +370,5 @@ def yoni():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=4000, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True, use_reloader=False)
