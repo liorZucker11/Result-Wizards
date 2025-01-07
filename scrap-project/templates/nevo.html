@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>נבו</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --secondary-gradient: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+            --secondary-color: #4a4a4a;
+            --background-color: #f4f7f6;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            direction: rtl;
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,255,255,0.5)), url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-gradient);
+        }
+
+        .student-name {
+            background: var(--primary-gradient);
+            color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: skew(-10deg);
+        }
+
+        .section-title {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--secondary-gradient);
+        }
+
+        .hobbies-section {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #2575fc;
+            margin-bottom: 30px;
+        }
+
+        .hobbies-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .hobbies-list li {
+            background-color: white;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .hobbies-list li:hover {
+            transform: translateX(-10px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .hobbies-list li::before {
+            content: '•';
+            color: #2575fc;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: 10px;
+            font-size: 1.5em;
+        }
+
+        .courses-table {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .courses-table thead {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .courses-table thead th {
+            padding: 15px;
+            text-align: right;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .courses-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .courses-table tbody tr:nth-child(even) {
+            background-color: #f9f9fa;
+        }
+
+        .courses-table tbody tr:hover {
+            background-color: #f0f4ff;
+        }
+
+        .courses-table tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .courses-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+            text-align: right;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="student-name">נבו גוטליב</div>
+
+        <div class="hobbies-section">
+            <h3 class="section-title">תחביבים</h3>
+            <ul class="hobbies-list">
+                <li>כדורגל</li>
+                <li>רכבים</li>
+                <li>מחשב</li>
+            </ul>
+        </div>
+
+        <h2 class="section-title">קורסים</h2>
+        <table class="courses-table">
+            <thead>
+                <tr>
+                    <th>שם הקורס</th>
+                    <th>מרצה</th>
+                    <th>נקודות זכות</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>מתמטיקה</td>
+                    <td>ד"ר בני מוניץ</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>מדעי המחשב</td>
+                    <td>ד"ר נטלי לוי</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>פיזיקה</td>
+                    <td>ד"ר שי מנחם</td>
+                    <td>3</td>
+                </tr>
+            </tbody>
+        </table>
+      <p class="contact-info">מייל להתקשרות: <a href="mailto:nevo.gottlieb@e.braude.ac.il">nevo.gottlieb@e.braude.ac.il</a></p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

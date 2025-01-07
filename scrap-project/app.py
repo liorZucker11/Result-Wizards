@@ -346,6 +346,25 @@ def export_free_throw_percentages_to_csv(filename, team_results):
     print(f"Free throw percentages exported to {filename}")
 
 
+@app.route("/lior")
+def lior():
+    return render_template("lior.html")
+
+
+@app.route("/nevo")
+def nevo():
+    return render_template("nevo.html")
+
+
+@app.route("/raz")
+def raz():
+    return render_template("raz.html")
+
+
+@app.route("/yoni")
+def yoni():
+    return render_template("yoni.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=4000, use_reloader=False)

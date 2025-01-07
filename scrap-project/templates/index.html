@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBA Stats</title>
+    <title>Integrated Project</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,6 +17,36 @@
             background-color: #2196F3;
             color: white;
             padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            background-color: #2196F3;
+            color: white;
+            cursor: pointer;
+            padding: 10px 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .tab:hover {
+            background-color: #1769aa;
+        }
+        .tab.active {
+            border-bottom: 3px solid white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+        .tab-content.active {
+            display: block;
         }
         form {
             width: 50%;
@@ -55,54 +85,99 @@
             font-weight: bold;
         }
     </style>
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show the selected tab content and activate the tab
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+    </script>
 </head>
 <body>
-    <h1>Search NBA Player</h1>
-    <form action="/" method="post">
-        <label for="first_name">First Name:</label>
-        <input type="text" id="first_name" name="first_name" required>
-        <label for="last_name">Last Name:</label>
-        <input type="text" id="last_name" name="last_name" required>
-        <button type="submit" name="action" value="player_stats">Get Stats</button>
-        {% if message_player %}
-            <p class="message">{{ message_player }}</p>
-        {% endif %}
-    </form>
+    <h1>Result Wizards</h1>
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+        <div class="tab active" data-tab="tab1" onclick="openTab('tab1')">Project</div>
+        <div class="tab" data-tab="tab2" onclick="openTab('tab2')">Yoni</div>
+        <div class="tab" data-tab="tab3" onclick="openTab('tab3')">Lior</div>
+        <div class="tab" data-tab="tab4" onclick="openTab('tab4')">Nevo</div>
+        <div class="tab" data-tab="tab5" onclick="openTab('tab5')">Raz</div>
+    </div>
 
-    <hr>
+    <!-- Tab Content -->
+    <div id="tab1" class="tab-content active">
+        <!-- Search NBA Player -->
+        <h1>Search NBA Player</h1>
+        <form action="/" method="post">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+            <button type="submit" name="action" value="player_stats">Get Stats</button>
+            {% if message_player %}
+                <p class="message">{{ message_player }}</p>
+            {% endif %}
+        </form>
 
-    <h1>Head-to-Head Matchups</h1>
-    <form action="/" method="post">
-        <h3>Select Team 1:</h3>
-        <select name="team1" required>
-            <option value="">--Choose Team 1--</option>
-            {% for t in teams %}
-                <option value="{{ t }}">{{ t }}</option>
-            {% endfor %}
-        </select>
+        <hr>
 
-        <h3>Select Team 2:</h3>
-        <select name="team2" required>
-            <option value="">--Choose Team 2--</option>
-            {% for t in teams %}
-                <option value="{{ t }}">{{ t }}</option>
-            {% endfor %}
-        </select>
+        <!-- Head-to-Head Matchups -->
+        <h1>Head-to-Head Matchups</h1>
+        <form action="/" method="post">
+            <h3>Select Team 1:</h3>
+            <select name="team1" required>
+                <option value="">--Choose Team 1--</option>
+                {% for t in teams %}
+                    <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
 
-        <button type="submit" name="action" value="head_to_head">Get H2H Statistics</button>
-        {% if message_h2h %}
-            <p class="message">{{ message_h2h }}</p>
-        {% endif %}
-    </form>
+            <h3>Select Team 2:</h3>
+            <select name="team2" required>
+                <option value="">--Choose Team 2--</option>
+                {% for t in teams %}
+                    <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
 
-    <hr>
+            <button type="submit" name="action" value="head_to_head">Get H2H Statistics</button>
+            {% if message_h2h %}
+                <p class="message">{{ message_h2h }}</p>
+            {% endif %}
+        </form>
 
-    <h1>Top 5 Teams by Free Throw Percentage</h1>
-    <form action="/" method="post">
-        <button type="submit" name="action" value="free_throws">Get Free Throws Stats</button>
-        {% if message_free_throws %}
-            <p class="message">{{ message_free_throws }}</p>
-        {% endif %}
-    </form>
+        <hr>
+
+        <!-- Top 5 Teams by Free Throw Percentage -->
+        <h1>Top 5 Teams by Free Throw Percentage</h1>
+        <form action="/" method="post">
+            <button type="submit" name="action" value="free_throws">Get Free Throws Stats</button>
+            {% if message_free_throws %}
+                <p class="message">{{ message_free_throws }}</p>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Other Tabs -->
+    <div id="tab2" class="tab-content">
+        <iframe src="/yoni" style="width: 100%; height: 100vh; border: none;"></iframe>
+    </div>
+    <div id="tab3" class="tab-content">
+        <iframe src="/lior" style="width: 100%; height: 100vh; border: none;"></iframe>
+    </div>
+    <div id="tab4" class="tab-content">
+        <iframe src="/nevo" style="width: 100%; height: 100vh; border: none;"></iframe>
+    </div>
+    <div id="tab5" class="tab-content">
+        <iframe src="/raz" style="width: 100%; height: 100vh; border: none;"></iframe>
+    </div>
 </body>
 </html>
