@@ -20,16 +20,22 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 
-def get_installed_chrome_version():
+def get_installed_chrome_version(chrome_path):
     """
     Returns the installed Chrome version by executing `google-chrome --version`.
     """
     try:
-        output = subprocess.check_output(["/usr/bin/google-chrome", "--version"]).decode("utf-8")
+        output = subprocess.check_output([chrome_path, "--version"]).decode("utf-8")
         version = output.split(" ")[2]  # Extract the version number
         return version
     except Exception as e:
         raise RuntimeError(f"Failed to get Chrome version: {str(e)}")
+
+# Chrome binary path
+chrome_binary_path = "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome"
+
+# Detect the installed Chrome version
+chrome_version = get_installed_chrome_version(chrome_binary_path)
 
 
 # Set up Chrome options
@@ -39,8 +45,6 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
 chrome_options.binary_location = "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome"  # Path to Chrome binary
 
-
-chrome_version = get_installed_chrome_version()
 
 # Configure ChromeDriver to match the Chrome version
 service = Service(ChromeDriverManager(driver_version=chrome_version).install())
