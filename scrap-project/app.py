@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 from flask import Flask, render_template, request
 from selenium import webdriver
@@ -11,14 +12,25 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 import time
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.os_manager import ChromeType
-import subprocess
 from config import Config
 import csv
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+
+def get_installed_chrome_version():
+    """
+    Returns the installed Chrome version by executing `google-chrome --version`.
+    """
+    try:
+        output = subprocess.check_output(["/usr/bin/google-chrome", "--version"]).decode("utf-8")
+        version = output.split(" ")[2]  # Extract the version number
+        return version
+    except Exception as e:
+        raise RuntimeError(f"Failed to get Chrome version: {str(e)}")
+
 
 # Set up Chrome options
 chrome_options = Options()
@@ -27,10 +39,11 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36")
 chrome_options.binary_location = "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome"  # Path to Chrome binary
 
-# Specify the ChromeDriver version matching the Chrome version installed
-service = Service(
-    ChromeDriverManager(driver_version="114.0.5735.90", chrome_type=ChromeType.GOOGLE).install()
-)
+
+chrome_version = get_installed_chrome_version()
+
+# Configure ChromeDriver to match the Chrome version
+service = Service(ChromeDriverManager(driver_version=chrome_version).install())
 
 # Initialize WebDriver
 driver = webdriver.Chrome(service=service, options=chrome_options)

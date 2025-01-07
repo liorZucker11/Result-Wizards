@@ -6,18 +6,16 @@ set -o errexit
 STORAGE_DIR=/opt/render/project/.render
 
 if [[ ! -d $STORAGE_DIR/chrome ]]; then
-  echo "...Downloading Chrome version 114"
+  echo "...Downloading Chrome version 131"
   mkdir -p $STORAGE_DIR/chrome
   cd $STORAGE_DIR/chrome
 
-  # Download Chrome version 114 (replace with the version you need)
+  # Download and install Chrome version 131
   wget -q -O chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-
-  # Extract the Chrome binary
   dpkg -x chrome.deb $STORAGE_DIR/chrome
 
-  # Create a symlink to the Chrome binary
-  ln -s $STORAGE_DIR/chrome/opt/google/chrome/google-chrome /usr/bin/google-chrome
+  # Create a symlink to make Chrome accessible as 'google-chrome'
+  ln -sf $STORAGE_DIR/chrome/opt/google/chrome/google-chrome /usr/bin/google-chrome
 
   # Clean up
   rm chrome.deb
