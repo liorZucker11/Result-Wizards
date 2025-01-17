@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Q&A</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      background-color: #2196F3;
+      color: white;
+      padding: 20px;
+      margin-top: 0;
+    }
+    .qa-container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 900px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .qa-item {
+      margin-bottom: 30px;
+    }
+    .qa-item h2 {
+      color: #2196F3;
+      margin-top: 0;
+    }
+    .qa-item p {
+      margin: 5px 0 15px;
+    }
+    .qa-item a {
+      color: #1769aa;
+      text-decoration: none;
+    }
+    .qa-item a:hover {
+      text-decoration: underline;
+    }
+    /* Example styling for images */
+    .qa-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 10px 0;
+      border: 2px solid #ccc;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 15px 0;
+      width: 100%;
+    }
+    table, th, td {
+      border: 1px solid #bbb;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #e1e1e1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Project Q&A</h1>
+
+  <div class="qa-container">
+
+    <!-- Question 1 -->
+    <div class="qa-item">
+      <h2>1. What is the main focus of the website? What information is available to site visitors? Provide a single paragraph and include the website link.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        The website offers users comprehensive information about NBA games, including schedules, results, highlights, and game analyses. It also provides detailed statistics, news, and updates about teams and players, as well as unique content such as interviews and behind-the-scenes stories. Users can browse information on subscription plans for viewing personalized content, along with details on device and platform support.
+      </p>
+      <p>
+        <a href="https://www.nba.com/games" target="_blank" rel="noopener noreferrer">https://www.nba.com/games</a>
+      </p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="qa-item">
+      <h2>2. List three interesting queries you would want the website to answer (which it currently does not). For each query, specify the information needed to answer it.</h2>
+      <p><strong>Answer:</strong></p>
+      <ol>
+        <li>
+          <strong>Player performance trends over the last 10 games</strong><br>
+          <em>Query:</em> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”<br>
+          <ul>
+            <li><strong>Issue on NBA.com:</strong> Player statistics are generally displayed per game. Users must manually calculate averages by looking at multiple game summaries.</li>
+            <li><strong>Solution:</strong>
+              <ul>
+                <li>Extract individual game stats for the player.</li>
+                <li>Compute averages across the last 10 games.</li>
+                <li>Display a clear table or chart summarizing the data (e.g., points, assists, rebounds).</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li>
+          <strong>Head-to-head comparison between teams</strong><br>
+          <em>Query:</em> “How did two teams perform against each other in their last 5 encounters?”<br>
+          <ul>
+            <li><strong>Issue on NBA.com:</strong> Historical comparisons between teams are not centralized on the site. Users must look up each game separately.</li>
+            <li><strong>Solution:</strong>
+              <ul>
+                <li>Retrieve historical game data (results, dates, statistics) for the selected teams.</li>
+                <li>Provide a comparison that includes:
+                  <ul>
+                    <li>Wins/losses for each matchup.</li>
+                    <li>Average points per team.</li>
+                    <li>Key players in those games.</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li>
+          <strong>Free-throw shooting percentages</strong><br>
+          <em>Query:</em> “Top 5 NBA teams by free-throw percentage over each team’s last three games.”<br>
+          <ul>
+            <li><strong>Issue on NBA.com:</strong> Accurate team statistics appear on different links, making it difficult to view them all on a single page.</li>
+            <li><strong>Solution:</strong>
+              <ul>
+                <li>Gather data from separate games for each team.</li>
+                <li>Calculate average free-throw percentages over the last three games for each team.</li>
+                <li>Display the top 5 teams with the highest percentages.</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="qa-item">
+      <h2>3. Build a crawler that returns results for the queries you defined. (It is recommended, but not mandatory, to build the crawler in Python.) Present the crawler code.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        You can find our crawler code in our GitHub repository:
+        <a href="https://github.com/liorZucker11/Result-Wizards/tree/main/scrap-project" target="_blank" rel="noopener noreferrer">
+          https://github.com/liorZucker11/Result-Wizards/tree/main/scrap-project
+        </a>
+      </p>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="qa-item">
+      <h2>4. List different interesting technologies you used in your project.</h2>
+      <p><strong>Answer:</strong></p>
+      <ul>
+        <li><strong>Selenium:</strong> An automation tool used for programming crawlers to automatically access and control web browsers to collect data from websites.</li>
+        <li><strong>PrettyTable:</strong> A Python library that allows creating and displaying tables in a readable text format (console, files, or any other textual format), making it easier to style and organize data.</li>
+        <li><strong>BeautifulSoup:</strong> A Python library for parsing and processing HTML and XML code, making it simpler and more efficient to extract information from web pages.</li>
+        <li><strong>Flask:</strong> A lightweight Python framework for web application development, allowing the quick and simple creation of interactive interfaces.</li>
+        <li><strong>NetworkX:</strong> A Python library for creating, analyzing, and manipulating graphs, with an emphasis on analyzing connections and statistics between nodes, especially suited for information retrieval.</li>
+        <li><strong>Matplotlib:</strong> A Python library for creating visual graphs of data, offering flexibility and customization for various requirements.</li>
+      </ul>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="qa-item">
+      <h2>5. How long did your queries run? What does it depend on? Do you think this time can be improved?</h2>
+      <p><strong>Answer:</strong></p>
+      <ul>
+        <li>
+          <strong>Query A:</strong> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”
+          <em>Data exported to <code>deni_avdija_stats.csv</code>. Runtime: 20.01 seconds.</em>
+        </li>
+        <li>
+          <strong>Query B:</strong> “How did two teams perform against each other in their last 5 encounters?”
+          <em>Data exported to <code>Atlanta Hawks_vs_Memphis Grizzlies_H2H.csv</code>. Runtime: 51.37 seconds.</em>
+        </li>
+        <li>
+          <strong>Query C:</strong> “Ranking all NBA teams by free-throw percentage over each team’s last three games.”
+          <em>Free throw percentages exported to <code>free_throw_percentages.csv</code>. Runtime: 212.40 seconds.</em>
+        </li>
+      </ul>
+      <p>
+        The runtime of the queries depends on the number of links the crawler traverses and the volume of data being retrieved. During execution, we also wait for the page to fully render before starting to extract data, so there is a deliberate delay factored into the runtime. We could optimize these wait times more effectively, instead of relying on a fixed preset delay.
+      </p>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="qa-item">
+      <h2>6. Build an inverted index for the 15 most frequent words returned (it's enough to consider the first 20 pages returned). Show the result.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>The table below shows the words and their corresponding Document IDs:</p>
+      <!-- Example image display (adjust src if needed) -->
+      <img class="qa-image" src="inverted_index_example.jpg" alt="Inverted Index Table">
+    </div>
+
+    <!-- Question 7 -->
+    <div class="qa-item">
+      <h2>7. Pick one of the queries and calculate the tf-idf of the terms in that query.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        We calculate the term frequency–inverse document frequency (tfIdf) for the chosen query, considering the frequency of each term in the query and across all documents.
+      </p>
+      <p><em>Chosen Query:</em> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”</p>
+      <p>
+        Below is an example of the tables used to compute TF, DF, and IDF. (Converted from the black-background tables to a standard table format for clarity.)
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Word</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>P4</th>
+            <th>P5</th>
+            <th>P6</th>
+            <th>P7</th>
+            <th>P8</th>
+            <th>P9</th>
+            <th>P10</th>
+            <th>Df<sub>i</sub></th>
+            <th>D/Df<sub>i</sub></th>
+            <th>IDF</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Player</td>
+            <td>0</td><td>3</td><td>3</td><td>3</td><td>3</td><td>2</td><td>2</td><td>3</td><td>2</td><td>3</td>
+            <td>9</td><td>10/9</td><td>0.045</td>
+          </tr>
+          <tr>
+            <td>Games</td>
+            <td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+            <td>1</td><td>10/1</td><td>1</td>
+          </tr>
+          <tr>
+            <td>Assists</td>
+            <td>3</td><td>3</td><td>0</td><td>1</td><td>1</td><td>4</td><td>1</td><td>0</td><td>1</td><td>0</td>
+            <td>7</td><td>10/7</td><td>0.154</td>
+          </tr>
+          <tr>
+            <td>Last</td>
+            <td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+            <td>10</td><td>10/10</td><td>0</td>
+          </tr>
+          <tr>
+            <td>Rebounds</td>
+            <td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td>
+            <td>3</td><td>10/3</td><td>0.522</td>
+          </tr>
+          <tr>
+            <td>Points</td>
+            <td>4</td><td>6</td><td>0</td><td>1</td><td>7</td><td>5</td><td>2</td><td>4</td><td>3</td><td>2</td>
+            <td>9</td><td>10/9</td><td>0.045</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Next, we compute the TF–IDF by multiplying each term’s TF by its IDF across all relevant pages.
+      </p>
+      <img class="qa-image" src="tf_idf_example.jpg" alt="TF-IDF Table Example">
+    </div>
+
+    <!-- Question 8 -->
+    <div class="qa-item">
+      <h2>8. In the pages that were returned, are there any hubs or authorities? Explain.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        All three queries return links to player or team pages. Each page is independent and does not contain a link to another player’s page. Therefore, in these queries, we do not have Hubs or Authorities.
+      </p>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="qa-item">
+      <h2>9. Choose 10 pages that the crawler returned, which have links between them. Compute PageRank for each page (you may use a script). Show calculations and the final ranking.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        Below is a list of 10 links used to calculate PageRank:
+      </p>
+      <ul>
+        <li>https://www.nba.com/players → 0.329</li>
+        <li>https://www.nba.com/player/1630166/deni-avdija → 0.067</li>
+        <li>https://www.nba.com/stats/player/1630166 → 0.043</li>
+        <li>https://www.nba.com/player/1630166/deni-avdija/bio → 0.121</li>
+        <li>https://www.nba.com/player/1630166/deni-avdija/videos → 0.121</li>
+        <li>https://www.nba.com/team/1610612757/blazers → 0.043</li>
+        <li>https://www.nba.com/team/1610612757/schedule → 0.043</li>
+        <li>https://www.nba.com/stats/team/1610612757/traditional → 0.080</li>
+        <li>https://www.nba.com/game/por-vs-det-0022400493 → 0.067</li>
+        <li>https://www.nba.com/game/por-vs-det-0022400493/box-score → 0.086</li>
+      </ul>
+      <p>
+        These calculations were performed using the <code>NetworkX</code> library. We created a directed graph in which each node represents a link, and used a script to locate <code>href</code> references among these nodes on each page. When a link to another page was found, we added a corresponding edge to the graph.
+      </p>
+      <p>
+        Additionally, we performed PageRank with a custom alpha value (<code>a = 0.85</code>) using <code>NetworkX</code>.
+      </p>
+      <!-- Example of embedding the graph image -->
+      <img class="qa-image" src="pagerank_graph_example.jpg" alt="PageRank Graph">
+    </div>
+
+    <!-- Question 10 -->
+    <div class="qa-item">
+      <h2>10. Show the ranking from the previous section to two different users and ask them for relevance feedback.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        According to the PageRank results, one page stands out with a relatively high score –
+        <a href="https://www.nba.com/players">https://www.nba.com/players</a> (0.329) –
+        while the other pages are ranked with lower scores. To evaluate the relevance of the results, we asked two users to mark the results as relevant or not:
+      </p>
+      <ul>
+        <li><strong>User A:</strong> Marked all pages as relevant except <code>https://www.nba.com/stats/player/1630166</code>.</li>
+        <li><strong>User B:</strong> Marked all pages as relevant.</li>
+      </ul>
+      <p>
+        Based on this feedback, we can propose improving the queries by incorporating additional ranking parameters—for example, personal relevance (whether the content focuses on active players, personal stats, or game details). We could prioritize pages that offer general player information (e.g., “players”) and tailor them to user preferences by filtering out single-player-only pages. Such enhancements can improve the quality and relevance of the search results.
+      </p>
+      <p>
+        <em>For precision & recall:</em> We decided pages 1, 2, 5, 6, 8 are considered relevant.
+        <br>(See the attached small table image for how each user labeled each page.)
+      </p>
+      <img class="qa-image" src="user_feedback_table.jpg" alt="User Feedback Table">
+    </div>
+
+    <!-- Question 12 (no answer yet) -->
+    <div class="qa-item">
+      <h2>12. On January 28th, you will present the page from Question 11, including items 1–10, and receive feedback from your peers. Fill out the following table:</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        <em>We currently do not have a finalized answer or feedback for this question. Below is the placeholder table that will be filled in after feedback is collected:</em>
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Suggested Change</th>
+            <th>Do you think there is room for improvement? If so, explain how. If not, justify.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><!-- Proposed change goes here --></td>
+            <td><!-- Explanation goes here --></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><em>(Awaiting peer feedback.)</em></p>
+    </div>
+
+  </div>
+</body>
+</html>
