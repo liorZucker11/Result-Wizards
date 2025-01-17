@@ -294,11 +294,130 @@
       </p>
       <p><em>Chosen Query 1:</em> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”</p>
       <p>
-        Below are three tables used to illustrate the process of computing TF, DF, IDF, and eventually TF–IDF.
+        Below are four tables illustrating different stages of data collection and the TF–IDF computation process:
       </p>
 
-      <!-- 1) Original Table (Word, P1..P10, Dfi, D/Dfi, IDF) -->
-      <h3>Table 1: Raw Term Frequencies, DF, and IDF</h3>
+      <!-- Table 1: Player stats scraped (URL, Player, Games, Assists, Last, Rebounds, Points) -->
+      <h3>Table 1: Scraped Player Data</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>URL</th>
+            <th>Player</th>
+            <th>Games</th>
+            <th>Assists</th>
+            <th>Last</th>
+            <th>Rebounds</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>https://www.nba.com/player/1630166/deni-avdija</td>
+            <td>0</td>
+            <td>0</td>
+            <td>3</td>
+            <td>1</td>
+            <td>1</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>https://www.nba.com/player/2544/lebron-james</td>
+            <td>3</td>
+            <td>1</td>
+            <td>3</td>
+            <td>1</td>
+            <td>1</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>https://www.nba.com/player/1629029/luka-doncic</td>
+            <td>3</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>https://www.nba.com/player/201939/stephen-curry</td>
+            <td>3</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>https://www.nba.com/player/203507/giannis-antetokounmpo</td>
+            <td>3</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>https://www.nba.com/player/1628369/jayson-tatum</td>
+            <td>2</td>
+            <td>0</td>
+            <td>4</td>
+            <td>1</td>
+            <td>0</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>https://www.nba.com/player/201935/james-harden</td>
+            <td>2</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>https://www.nba.com/player/1626164/devin-booker</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>https://www.nba.com/player/201566/russell-westbrook</td>
+            <td>3</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>https://www.nba.com/player/203076/anthony-davis</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>4</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Table 2: Raw term frequencies + DF + IDF -->
+      <h3>Table 2: Raw Term Frequencies, DF, and IDF</h3>
       <table>
         <thead>
           <tr>
@@ -352,8 +471,8 @@
         </tbody>
       </table>
 
-      <!-- 2) TF Table (black background screenshot) -->
-      <h3>Table 2: TF Values per Page (Derived from the Term Frequencies)</h3>
+      <!-- Table 3: TF values (the "black background" screenshot) -->
+      <h3>Table 3: TF Values per Page</h3>
       <table>
         <thead>
           <tr>
@@ -452,8 +571,8 @@
         </tbody>
       </table>
 
-      <!-- 3) Final TF-IDF Table (3 decimal points) -->
-      <h3>Table 3: TF-IDF Table for All Terms (3 Decimal Points)</h3>
+      <!-- Table 4: Final TF-IDF Table (3 decimal points) -->
+      <h3>Table 4: TF-IDF Table for All Terms (3 Decimal Points)</h3>
       <table>
         <thead>
           <tr>
@@ -553,7 +672,7 @@
       </table>
 
       <p>
-        Next, we compute the TF–IDF by multiplying each term’s TF by its IDF across all relevant pages.
+        Finally, by multiplying each term’s TF by its IDF, we obtain the TF–IDF score for each term in each page.
       </p>
     </div>
 
@@ -691,7 +810,6 @@
         </tbody>
       </table>
     </div>
-
   </div>
 </body>
 </html>
