@@ -175,15 +175,15 @@
       <ul>
         <li>
           <strong>Query A:</strong> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”
-          <em>Data exported to <code>deni_avdija_stats.csv</code>. Runtime: 20.01 seconds.</em>
+          <em>Runtime: 20.01 seconds.</em>
         </li>
         <li>
           <strong>Query B:</strong> “How did two teams perform against each other in their last 5 encounters?”
-          <em>Data exported to <code>Atlanta Hawks_vs_Memphis Grizzlies_H2H.csv</code>. Runtime: 51.37 seconds.</em>
+          <em>Runtime: 51.37 seconds.</em>
         </li>
         <li>
           <strong>Query C:</strong> “Ranking all NBA teams by free-throw percentage over each team’s last three games.”
-          <em>Free throw percentages exported to <code>free_throw_percentages.csv</code>. Runtime: 212.40 seconds.</em>
+          <em>Runtime: 212.40 seconds.</em>
         </li>
       </ul>
       <p>
@@ -196,8 +196,93 @@
       <h2>6. Build an inverted index for the 15 most frequent words returned (it's enough to consider the first 20 pages returned). Show the result.</h2>
       <p><strong>Answer:</strong></p>
       <p>The table below shows the words and their corresponding Document IDs:</p>
-      <!-- Example image display (adjust src if needed) -->
-      <img class="qa-image" src="inverted_index_example.jpg" alt="Inverted Index Table">
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Word</th>
+            <th>Document IDs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>nba</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>game</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>home</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>league</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>stats</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>player</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>store</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>2024</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>10</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>play</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>tickets</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>players</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>draft</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>fantasy</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td>years</td>
+            <td>1, 2, 3, 4, 5, 6, 7, 8, 9, 10</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Question 7 -->
@@ -207,10 +292,13 @@
       <p>
         We calculate the term frequency–inverse document frequency (tfIdf) for the chosen query, considering the frequency of each term in the query and across all documents.
       </p>
-      <p><em>Chosen Query:</em> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”</p>
+      <p><em>Chosen Query 1:</em> “What are the average points, assists, and rebounds of a certain player over his last 10 games?”</p>
       <p>
-        Below is an example of the tables used to compute TF, DF, and IDF. (Converted from the black-background tables to a standard table format for clarity.)
+        Below are three tables used to illustrate the process of computing TF, DF, IDF, and eventually TF–IDF.
       </p>
+
+      <!-- 1) Original Table (Word, P1..P10, Dfi, D/Dfi, IDF) -->
+      <h3>Table 1: Raw Term Frequencies, DF, and IDF</h3>
       <table>
         <thead>
           <tr>
@@ -264,11 +352,212 @@
         </tbody>
       </table>
 
+      <!-- 2) TF Table (black background screenshot) -->
+      <h3>Table 2: TF Values per Page (Derived from the Term Frequencies)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Word</th>
+            <th>TF-1</th>
+            <th>TF-2</th>
+            <th>TF-3</th>
+            <th>TF-4</th>
+            <th>TF-5</th>
+            <th>TF-6</th>
+            <th>TF-7</th>
+            <th>TF-8</th>
+            <th>TF-9</th>
+            <th>TF-10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Player</td>
+            <td>0</td>
+            <td>1.477</td>
+            <td>1.477</td>
+            <td>1.477</td>
+            <td>1.301</td>
+            <td>1.301</td>
+            <td>1.301</td>
+            <td>1.477</td>
+            <td>1.301</td>
+            <td>1.301</td>
+          </tr>
+          <tr>
+            <td>Games</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Assists</td>
+            <td>1.477</td>
+            <td>1.477</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1.602</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Last</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Rebounds</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Points</td>
+            <td>1.602</td>
+            <td>1.778</td>
+            <td>1.778</td>
+            <td>1</td>
+            <td>1.845</td>
+            <td>1.698</td>
+            <td>1.301</td>
+            <td>1</td>
+            <td>1.301</td>
+            <td>1.602</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 3) Final TF-IDF Table (3 decimal points) -->
+      <h3>Table 3: TF-IDF Table for All Terms (3 Decimal Points)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>P4</th>
+            <th>P5</th>
+            <th>P6</th>
+            <th>P7</th>
+            <th>P8</th>
+            <th>P9</th>
+            <th>P10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Player</td>
+            <td>0.000</td>
+            <td>0.066</td>
+            <td>0.066</td>
+            <td>0.066</td>
+            <td>0.059</td>
+            <td>0.059</td>
+            <td>0.059</td>
+            <td>0.066</td>
+            <td>0.059</td>
+            <td>0.059</td>
+          </tr>
+          <tr>
+            <td>Games</td>
+            <td>0.000</td>
+            <td>1.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+          </tr>
+          <tr>
+            <td>Assists</td>
+            <td>0.227</td>
+            <td>0.227</td>
+            <td>0.000</td>
+            <td>0.154</td>
+            <td>0.154</td>
+            <td>0.247</td>
+            <td>0.154</td>
+            <td>0.000</td>
+            <td>0.154</td>
+            <td>0.000</td>
+          </tr>
+          <tr>
+            <td>Last</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+          </tr>
+          <tr>
+            <td>Rebounds</td>
+            <td>0.522</td>
+            <td>0.522</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.000</td>
+            <td>0.522</td>
+            <td>0.000</td>
+            <td>0.000</td>
+          </tr>
+          <tr>
+            <td>Points</td>
+            <td>0.072</td>
+            <td>0.080</td>
+            <td>0.080</td>
+            <td>0.045</td>
+            <td>0.083</td>
+            <td>0.076</td>
+            <td>0.059</td>
+            <td>0.045</td>
+            <td>0.059</td>
+            <td>0.072</td>
+          </tr>
+        </tbody>
+      </table>
+
       <p>
         Next, we compute the TF–IDF by multiplying each term’s TF by its IDF across all relevant pages.
       </p>
-      <img class="qa-image" src="tf_idf_example.jpg" alt="TF-IDF Table Example">
     </div>
+
+
 
     <!-- Question 8 -->
     <div class="qa-item">
@@ -305,7 +594,7 @@
         Additionally, we performed PageRank with a custom alpha value (<code>a = 0.85</code>) using <code>NetworkX</code>.
       </p>
       <!-- Example of embedding the graph image -->
-      <img class="qa-image" src="pagerank_graph_example.jpg" alt="PageRank Graph">
+      <img src="{{ url_for('static', filename='graph.png') }}" alt="PageRank Graph" />
     </div>
 
     <!-- Question 10 -->
@@ -325,19 +614,68 @@
         Based on this feedback, we can propose improving the queries by incorporating additional ranking parameters—for example, personal relevance (whether the content focuses on active players, personal stats, or game details). We could prioritize pages that offer general player information (e.g., “players”) and tailor them to user preferences by filtering out single-player-only pages. Such enhancements can improve the quality and relevance of the search results.
       </p>
       <p>
-        <em>For precision & recall:</em> We decided pages 1, 2, 5, 6, 8 are considered relevant.
-        <br>(See the attached small table image for how each user labeled each page.)
+        <em>For precision &amp; recall:</em> We decided pages 1, 2, 5, 6, 8 are considered relevant.
       </p>
-      <img class="qa-image" src="user_feedback_table.jpg" alt="User Feedback Table">
+
+      <!-- Replace the image with an actual HTML table -->
+      <table style="border-collapse: collapse; margin-top: 1em;">
+        <thead>
+          <tr style="background-color: #e1e1e1;">
+            <th style="border: 1px solid #ccc; padding: 8px;">User</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 1</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 2</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 3</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 4</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 5</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 6</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 7</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 8</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 9</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Page 10</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Precision</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Recall</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border: 1px solid #ccc; padding: 8px;">a</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;">7/10</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">1 = 5/5</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ccc; padding: 8px;">b</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;">R</td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;"></td>
+            <td style="border: 1px solid #ccc; padding: 8px;">5/10</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">4/5</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
 
     <!-- Question 12 (no answer yet) -->
     <div class="qa-item">
       <h2>12. On January 28th, you will present the page from Question 11, including items 1–10, and receive feedback from your peers. Fill out the following table:</h2>
       <p><strong>Answer:</strong></p>
-      <p>
-        <em>We currently do not have a finalized answer or feedback for this question. Below is the placeholder table that will be filled in after feedback is collected:</em>
-      </p>
       <table>
         <thead>
           <tr>
@@ -352,7 +690,6 @@
           </tr>
         </tbody>
       </table>
-      <p><em>(Awaiting peer feedback.)</em></p>
     </div>
 
   </div>
