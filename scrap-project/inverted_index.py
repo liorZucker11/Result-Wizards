@@ -109,5 +109,5 @@ most_common_words = [word for word, _ in word_counts.most_common(15)]
 # Create an inverted index for the most common words
 final_inverted_index = {word: inverted_index[word] for word in most_common_words}
 
-export_inverted_index_to_csv("inverted_index.csv", final_inverted_index)
+export_inverted_index_to_csv("CSV_Files/inverted_index.csv", final_inverted_index)
 

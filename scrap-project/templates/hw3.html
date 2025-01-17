@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Homework.css">
+  <title>Homework</title>
+</head>
+<body>
+  <div class="homework-container">
+    <h1>Homework</h1>
+    <div class="questions-list">
+      <div class="question-item">A. Write down different interesting technologies that you used in the project.</div>
+      <div class="question-item">B. How long did your queries run? What does it depend on? Do you think this time can be improved?</div>
+      <div class="question-item">C. Are there hubs in the returned pages? Authorities?</div>
+      <div class="question-item">D. Choose 10 pages that the crawler returned, and which have links between them. Calculate PageRank for each page.</div>
+      <div class="question-item">E. Based on the PageRank results, assess the relevance of the pages using user feedback and suggest improvements for the queries.</div>
+    </div>
+
+    <div class="question-content">
+      <!-- A -->
+      <h2>A. Write down different interesting technologies that you used in the project.</h2>
+      <p><strong>Answer:</strong></p>
+      <div class="technology-list">
+        <div class="technology">
+          <h3>Selenium</h3>
+          <img src="/images/selenium.png" alt="Selenium">
+          <p>Selenium: an automation tool used for programming crawlers to automatically access and control web browsers, for the purpose of collecting data from websites.</p>
+        </div>
+        <div class="technology">
+          <h3>PrettyTable</h3>
+          <img src="/images/prettytable.png" alt="PrettyTable">
+          <p>PrettyTable: a Python library that allows creating and displaying tables in a readable text format (console, files, or any other textual format), making it easier to style and organize data.</p>
+        </div>
+        <div class="technology">
+          <h3>BeautifulSoup</h3>
+          <img src="/images/beautifulsoup.png" alt="BeautifulSoup">
+          <p>BeautifulSoup: a Python library for parsing and processing HTML and XML code, making it simpler and more efficient to extract information from web pages.</p>
+        </div>
+        <div class="technology">
+          <h3>Flask</h3>
+          <img src="/images/flask.png" alt="Flask" />
+          <p>Flask: a lightweight Python framework for web application development, allowing the quick and simple creation of interactive interfaces.</p>
+        </div>
+        <div class="technology">
+          <h3>NetworkX</h3>
+          <img src="/images/networks.png" alt="NetworkX">
+          <p>NetworkX: a Python library for creating, analyzing, and manipulating graphs, with an emphasis on analyzing connections and statistics between nodes, especially suited for information retrieval.</p>
+        </div>
+        <div class="technology">
+          <h3>Matplotlib</h3>
+          <img src="/images/matplotlib.png" alt="Matplotlib">
+          <p>Matplotlib: a Python library for creating visual graphs of data, offering flexibility and customization for various requirements.</p>
+        </div>
+      </div>
+
+      <!-- B -->
+      <h2>B. How long did your queries run? What does it depend on? Do you think this time can be improved?</h2>
+      <p><strong>Answer:</strong></p>
+      <div>
+        <h3>Query Execution Times and Analysis:</h3>
+        <p>
+          <strong>Query A:</strong> "What are the average points, assists, and rebounds of a certain player over his last 10 games?"<br>
+          <em>Data has been exported to <code>deni_avdija_stats.csv</code></em>. The execution took <strong>20.01 seconds</strong> to complete.
+        </p>
+        <p>
+          <strong>Query B:</strong> "How did two teams perform against each other in their last 5 encounters?"<br>
+          <em>Data has been exported to <code>Atlanta Hawks_vs_Memphis Grizzlies_H2H.csv</code></em>. The execution took <strong>51.37 seconds</strong> to complete.
+        </p>
+        <p>
+          <strong>Query C:</strong> "Ranking all NBA teams by free-throw percentage over each team's last three games." <br>
+          <em>Free throw percentages exported to <code>free_throw_percentages.csv</code></em>. The execution took <strong>212.40 seconds</strong> to complete.
+        </p>
+        <p>
+          The runtime of the queries depends on the number of links the crawler traverses and the volume of data being retrieved. During execution, we also wait for the page to fully render before starting to extract data, so there is a deliberate delay factored into the runtime. It is possible to try optimizing these wait times more effectively, instead of relying on a fixed preset delay.
+        </p>
+      </div>
+
+      <!-- C -->
+      <h2>C. Are there hubs in the returned pages? Authorities?</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        All three queries return links to player or team pages. Each page is independent and does not contain a link to another player's page. Therefore, in these queries, we do not have Hubs and Authorities.
+      </p>
+
+      <!-- D -->
+      <h2>D. Choose 10 pages that the crawler returned, and which have links between them. Calculate PageRank for each page.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        Below is a list of 10 links used to calculate PageRank:
+      </p>
+      <ul>
+        <li>https://www.nba.com/players → 0.329</li>
+        <li>https://www.nba.com/player/1630166/deni-avdija → 0.067</li>
+        <li>https://www.nba.com/stats/player/1630166 → 0.043</li>
+        <li>https://www.nba.com/player/1630166/deni-avdija/bio → 0.121</li>
+        <li>https://www.nba.com/player/1630166/deni-avdija/videos → 0.121</li>
+        <li>https://www.nba.com/team/1610612757/blazers → 0.043</li>
+        <li>https://www.nba.com/team/1610612757/schedule → 0.043</li>
+        <li>https://www.nba.com/stats/team/1610612757/traditional → 0.080</li>
+        <li>https://www.nba.com/game/por-vs-det-0022400493 → 0.067</li>
+        <li>https://www.nba.com/game/por-vs-det-0022400493/box-score → 0.086</li>
+      </ul>
+
+      <p>
+        These calculations were performed using the <code>NetworkX</code> library. We created a directed graph in which each node represents a link, and used a script to locate <code>href</code> references within this set of nodes on each page. When a link to another page was found, we added a corresponding edge to the graph.
+      </p>
+      <p>
+        Additionally, we performed PageRank with a custom alpha value (<code>a = 0.85</code>) using <code>NetworkX</code>.
+      </p>
+      <img src="/images/graph.jpg" alt="PageRank Graph" style="max-width: 100%; height: auto; margin-top: 20px;">
+
+      <!-- E -->
+      <h2>E. Based on the PageRank results, assess the relevance of the pages using user feedback and suggest improvements for the queries.</h2>
+      <p><strong>Answer:</strong></p>
+      <p>
+        According to the PageRank results, one page stands out with a relatively high score –
+        <a href="https://www.nba.com/players" target="_blank" rel="noopener noreferrer">https://www.nba.com/players</a> (0.329) –
+        while the other pages are ranked with lower scores. To evaluate the relevance of the results, we asked two users to mark the results according to their relevance:
+      </p>
+      <ul>
+        <li><strong>User A:</strong> Marked all pages as relevant except for "https://www.nba.com/stats/player/1630166".</li>
+        <li><strong>User B:</strong> Marked all the pages as relevant.</li>
+      </ul>
+      <p>
+        Based on the feedback, we can propose improving the queries by incorporating additional ranking parameters. For example, taking personal relevance into account, such as whether the content focuses on active players, personal statistics, or game details. In this case, we could improve the query by prioritizing pages that aggregate general information about players (like "players") and align them with user preferences—for instance, by filtering out pages that are solely about a single specific player. Such adjustments could enhance the quality of the search results and tailor them more closely to users’ needs.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

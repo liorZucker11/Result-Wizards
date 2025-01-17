@@ -31,6 +31,7 @@ def get_installed_chrome_version(chrome_path):
     except Exception as e:
         raise RuntimeError(f"Failed to get Chrome version: {str(e)}")
 
+
 # Chrome binary path
 chrome_binary_path = "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome"
 
@@ -335,7 +336,7 @@ def get_top_5_teams_by_free_throw_percentage():
     team_results.sort(key=lambda x: x["Average Free Throw Percentage"], reverse=True)
 
     # Export to CSV
-    filename = "free_throw_percentages.csv"
+    filename = "CSV_Files/free_throw_percentages.csv"
     export_free_throw_percentages_to_csv(filename, team_results)
 
     return filename  # Return the CSV file name to indicate success
@@ -393,6 +394,11 @@ def raz():
 @app.route("/yoni")
 def yoni():
     return render_template("yoni.html")
+
+
+@app.route("/hw3")
+def hw3():
+    return render_template("hw3.html")
 
 
 if __name__ == "__main__":

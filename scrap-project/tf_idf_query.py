@@ -71,4 +71,4 @@ for url, counts in all_results.items():
         print(f"{word}: {count}")
 
 # Export to CSV
-export_to_csv("word_counts.csv", all_results)
+export_to_csv("CSV_Files/word_counts.csv", all_results)
