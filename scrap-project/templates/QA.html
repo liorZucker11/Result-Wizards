@@ -719,7 +719,6 @@
         In addition, to improve page rankings, it is possible to pre-filter and catalog the returned pages into groups according to topics.
         This way the ratings will be more accurate after additional filtering.
       </p>
-      <!-- Example of embedding the graph image -->
       <img src="{{ url_for('static', filename='graph.png') }}" alt="PageRank Graph" />
     </div>
 
@@ -813,12 +812,21 @@
         </thead>
         <tbody>
           <tr>
-            <td><!-- Proposed change goes here --></td>
-            <td><!-- Explanation goes here --></td>
+            <td>Improved runtime of the third query</td>
+            <td>Yes, The crawler in the third query goes through a lot of pages and therefore the running time is longer, indeed it would be more effective to improve the running time by using threads and running concurrently.</td>
+          </tr>
+          <tr>
+            <td>Find a Solution to the sleep() function</td>
+            <td>Yes, the `sleep()` function can be used to efficiently manage execution flow, allowing some threads to wait while others continue, thus optimizing resource use and application responsiveness.</td>
+          </tr>
+          <tr>
+            <td>Apply stemming in inverted index</td>
+            <td>Yes, Indeed the proposed change is effective and makes the results more accurate, in response we applied stemming in the code and the results were indeed more accurate!</td>
           </tr>
         </tbody>
       </table>
     </div>
+
 
     <!-- Question 13 (no answer yet) -->
     <div class="qa-item">
