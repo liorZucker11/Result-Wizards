@@ -1,22 +1,23 @@
 import re
-from collections import defaultdict, Counter
+import nltk
+from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import nltk
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import csv
+from collections import defaultdict, Counter
 
 # Download stopwords and punkt if not already downloaded
-# nltk.download('stopwords')
-# nltk.download('punkt')
-# nltk.download('punkt_tab')
+nltk.download('stopwords')
+nltk.download('punkt')
 
+# Initialize the Porter Stemmer
+stemmer = PorterStemmer()
 
 # Initialize stop words
 stop_words = set(stopwords.words('english'))
-stop_words.update(map(str, range(10)))  # Add digits '0'-'9' to stop words
 stop_words.update(map(chr, range(ord('a'), ord('z') + 1)))  # Add letters 'a'-'z' to stop words
 
 
@@ -38,8 +39,12 @@ def export_inverted_index_to_csv(filename, inverted_index):
 # Function to process text and remove stop words
 def process_text(text):
     words = word_tokenize(text.lower())  # Tokenize and convert to lowercase
-    words = [word for word in words if word.isalnum() and word not in stop_words]  # Filter out stop words and non-alphanumeric tokens
+    words = [stemmer.stem(word) for word in words if not is_number(word) and word.isalnum() and word not in stop_words]  # Apply stemming and filter out stop words and non-alphanumeric tokens
     return words
+
+
+def is_number(token):
+    return bool(re.search(r'\d', token))  # This regex checks for any digit in the token
 
 
 # Function to fetch page content
